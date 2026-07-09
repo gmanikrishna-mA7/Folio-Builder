@@ -168,7 +168,7 @@ public class ExportController {
     .timeline-panel.active { display:block; }
     .timeline-line { border-left: 1px dashed rgba(99,102,241,.4); padding-left: 1.5rem; margin-left: .75rem; display:flex; flex-direction:column; gap:2rem; }
     .timeline-item { position:relative; }
-    .timeline-dot { position:absolute; left:-1.75rem; top:.2rem; width:.75rem; height:.75rem; border-radius:50%; background:#6366f1; border: 2px solid rgba(255,255,255,.2); }
+    .timeline-dot { position:absolute; left:-1.75rem; top:.2rem; width:.75rem; height:.75rem; border-radius:50%%; background:#6366f1; border: 2px solid rgba(255,255,255,.2); }
     .timeline-dot.cyan { background: var(--cyan); }
     .timeline-badge { display:inline-block; font-size:.65rem; font-family:monospace; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); padding:.15rem .6rem; border-radius:.25rem; color: #818cf8; margin-bottom:.4rem; }
     .timeline-badge.cyan { color: var(--cyan); }
