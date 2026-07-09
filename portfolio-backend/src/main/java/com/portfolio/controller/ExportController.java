@@ -146,9 +146,16 @@ public class ExportController {
     .hero-img-circle img { width:100%%; height:100%%; object-fit:cover; border-radius:50%%; }
     .hero-initials { font-size: 3rem; font-weight: 900; color: #475569; }
     /* ── Skills ── */
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 1rem; }
-    .skill-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius: .75rem; padding: 1rem; text-align:center; font-size:.8rem; font-weight:600; color:#e2e8f0; transition: all .25s; cursor:default; }
-    .skill-card:hover { border-color: rgba(99,102,241,.4); transform: translateY(-3px); }
+    .skill-category-group { margin-bottom: 2rem; }
+    .skill-category-title { font-size: .75rem; text-transform: uppercase; font-weight: 700; letter-spacing: .15em; color: #818cf8; font-family: monospace; margin-bottom: 1rem; padding-left: .25rem; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 1rem; }
+    .skill-card {
+      background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.08); border-radius: .75rem;
+      padding: .85rem 1rem; display: flex; align-items: center; gap: .75rem;
+      font-size: .8rem; font-weight: 600; color: #e2e8f0; transition: all .25s; cursor: default;
+    }
+    .skill-card:hover { border-color: rgba(99,102,241,.4); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99,102,241,.05); }
+    .skill-icon { width: 1.25rem; height: 1.25rem; object-fit: contain; filter: brightness(.95); }
     /* ── Projects ── */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5rem; }
     .project-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem; transition:all .25s; }
@@ -404,18 +411,185 @@ public class ExportController {
     // ──────────────────────────────────────────────────────────────────────────
     // Section builders
     // ──────────────────────────────────────────────────────────────────────────
+    private static class SkillInfo {
+        String cleanName;
+        String category;
+        String iconUrl;
+        
+        SkillInfo(String cleanName, String category, String iconUrl) {
+            this.cleanName = cleanName;
+            this.category = category;
+            this.iconUrl = iconUrl;
+        }
+    }
+
+    private SkillInfo getSkillCategoryAndIcon(String skillName) {
+        String cleanName = (skillName != null) ? skillName.trim() : "";
+        String category = "Skills";
+
+        if (cleanName.contains("::")) {
+            String[] parts = cleanName.split("::");
+            if (parts.length > 0) cleanName = parts[0].trim();
+            if (parts.length > 1) category = parts[1].trim();
+        } else {
+            String nameLower = cleanName.toLowerCase();
+            // Programming Languages check
+            if (java.util.Arrays.asList("python", "java", "javascript", "js", "typescript", "ts", "c++", "cpp", "c#", "csharp", "ruby", "go", "golang", "php", "swift", "kotlin", "rust", "c", "html", "css").stream()
+                    .anyMatch(lang -> nameLower.equals(lang) || nameLower.startsWith(lang + " ") || nameLower.endsWith(" " + lang))) {
+                category = "Programming Languages";
+            }
+            // Database check
+            else if (java.util.Arrays.asList("mysql", "postgresql", "postgres", "mongodb", "mongo", "oracle", "redis", "sqlite", "mariadb", "sql", "nosql", "db").stream()
+                    .anyMatch(db -> nameLower.contains(db))) {
+                category = "Database";
+            }
+            // Tools check
+            else if (java.util.Arrays.asList("git", "github", "docker", "kubernetes", "k8s", "aws", "gcp", "azure", "jenkins", "jira", "postman", "vscode", "maven", "gradle", "npm", "yarn").stream()
+                    .anyMatch(tool -> nameLower.contains(tool))) {
+                category = "Tools";
+            }
+        }
+
+        if ("Skills".equalsIgnoreCase(category)) {
+            category = "Skills / Frameworks";
+        }
+
+        String iconUrl = getSkillDeviconUrl(cleanName);
+        return new SkillInfo(cleanName, category, iconUrl);
+    }
+
+    private String getSkillDeviconUrl(String skillName) {
+        String name = (skillName != null) ? skillName.toLowerCase().trim() : "";
+        java.util.Map<String, String> mappings = new java.util.HashMap<>();
+        mappings.put("python", "python/python-original.svg");
+        mappings.put("java", "java/java-original.svg");
+        mappings.put("javascript", "javascript/javascript-original.svg");
+        mappings.put("js", "javascript/javascript-original.svg");
+        mappings.put("typescript", "typescript/typescript-original.svg");
+        mappings.put("ts", "typescript/typescript-original.svg");
+        mappings.put("c++", "cplusplus/cplusplus-original.svg");
+        mappings.put("cpp", "cplusplus/cplusplus-original.svg");
+        mappings.put("c#", "csharp/csharp-original.svg");
+        mappings.put("csharp", "csharp/csharp-original.svg");
+        mappings.put("c", "c/c-original.svg");
+        mappings.put("go", "go/go-original.svg");
+        mappings.put("golang", "go/go-original.svg");
+        mappings.put("rust", "rust/rust-original-for-dark.svg");
+        mappings.put("ruby", "ruby/ruby-original.svg");
+        mappings.put("php", "php/php-original.svg");
+        mappings.put("html", "html5/html5-original.svg");
+        mappings.put("html5", "html5/html5-original.svg");
+        mappings.put("css", "css3/css3-original.svg");
+        mappings.put("css3", "css3/css3-original.svg");
+        
+        mappings.put("react", "react/react-original.svg");
+        mappings.put("reactjs", "react/react-original.svg");
+        mappings.put("react.js", "react/react-original.svg");
+        mappings.put("angular", "angularjs/angularjs-original.svg");
+        mappings.put("vue", "vuejs/vuejs-original.svg");
+        mappings.put("vuejs", "vuejs/vuejs-original.svg");
+        mappings.put("node", "nodejs/nodejs-original.svg");
+        mappings.put("nodejs", "nodejs/nodejs-original.svg");
+        mappings.put("spring", "spring/spring-original.svg");
+        mappings.put("spring boot", "spring/spring-original.svg");
+        mappings.put("springboot", "spring/spring-original.svg");
+        mappings.put("express", "express/express-original.svg");
+        mappings.put("expressjs", "express/express-original.svg");
+        mappings.put("django", "django/django-plain.svg");
+        mappings.put("flask", "flask/flask-original.svg");
+        mappings.put("tailwind", "tailwindcss/tailwindcss-original.svg");
+        mappings.put("tailwindcss", "tailwindcss/tailwindcss-original.svg");
+        mappings.put("bootstrap", "bootstrap/bootstrap-original.svg");
+        
+        mappings.put("mysql", "mysql/mysql-original.svg");
+        mappings.put("postgresql", "postgresql/postgresql-original.svg");
+        mappings.put("postgres", "postgresql/postgresql-original.svg");
+        mappings.put("mongodb", "mongodb/mongodb-original.svg");
+        mappings.put("mongo", "mongodb/mongodb-original.svg");
+        mappings.put("redis", "redis/redis-original.svg");
+        mappings.put("oracle", "oracle/oracle-original.svg");
+        mappings.put("sqlite", "sqlite/sqlite-original.svg");
+        mappings.put("mariadb", "mariadb/mariadb-original.svg");
+        
+        mappings.put("git", "git/git-original.svg");
+        mappings.put("github", "github/github-original.svg");
+        mappings.put("docker", "docker/docker-original.svg");
+        mappings.put("kubernetes", "kubernetes/kubernetes-original.svg");
+        mappings.put("k8s", "kubernetes/kubernetes-original.svg");
+        mappings.put("aws", "amazonwebservices/amazonwebservices-original-wordmark.svg");
+        mappings.put("gcp", "googlecloud/googlecloud-original.svg");
+        mappings.put("azure", "azure/azure-original.svg");
+        mappings.put("jenkins", "jenkins/jenkins-original.svg");
+        mappings.put("jira", "jira/jira-original.svg");
+        mappings.put("postman", "postman/postman-original.svg");
+        mappings.put("vscode", "vscode/vscode-original.svg");
+        mappings.put("maven", "maven/maven-original.svg");
+        mappings.put("npm", "npm/npm-original-wordmark.svg");
+
+        String path = null;
+        for (String key : mappings.keySet()) {
+            if (name.equals(key) || name.contains(key)) {
+                path = mappings.get(key);
+                break;
+            }
+        }
+
+        if (path != null) {
+            return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/" + path;
+        }
+        return null;
+    }
+
     private String buildSkills(List<SkillDTO> skills) {
         if (skills == null || skills.isEmpty()) return "";
-        String cards = skills.stream()
-            .map(s -> "<div class=\"skill-card\">" + esc(s.name()) + "</div>")
-            .collect(Collectors.joining("\n"));
-        return """
-<section id="skills">
-  <h2 class="sec-heading">Technical Toolkit</h2>
-  <div class="skills-grid">
-    %s
-  </div>
-</section>""".formatted(cards);
+        
+        java.util.Map<String, java.util.List<SkillInfo>> categorized = new java.util.LinkedHashMap<>();
+        categorized.put("Programming Languages", new java.util.ArrayList<>());
+        categorized.put("Skills / Frameworks", new java.util.ArrayList<>());
+        categorized.put("Database", new java.util.ArrayList<>());
+        categorized.put("Tools", new java.util.ArrayList<>());
+
+        for (SkillDTO s : skills) {
+            SkillInfo info = getSkillCategoryAndIcon(s.name());
+            java.util.List<SkillInfo> list = categorized.get(info.category);
+            if (list == null) {
+                list = new java.util.ArrayList<>();
+                categorized.put(info.category, list);
+            }
+            list.add(info);
+        }
+
+        StringBuilder html = new StringBuilder();
+        html.append("<section id=\"skills\" class=\"space-y-8\">\n");
+        html.append("  <h2 class=\"sec-heading\">Technical Toolkit</h2>\n");
+        html.append("  <div class=\"space-y-6\">\n");
+
+        for (java.util.Map.Entry<String, java.util.List<SkillInfo>> entry : categorized.entrySet()) {
+            String catName = entry.getKey();
+            java.util.List<SkillInfo> list = entry.getValue();
+            if (list.isEmpty()) continue;
+
+            html.append("    <div class=\"skill-category-group\">\n");
+            html.append("      <h3 class=\"skill-category-title\">").append(esc(catName)).append("</h3>\n");
+            html.append("      <div class=\"skills-grid\">\n");
+
+            for (SkillInfo skill : list) {
+                html.append("        <div class=\"skill-card\">\n");
+                if (skill.iconUrl != null) {
+                    html.append("          <img src=\"").append(esc(skill.iconUrl)).append("\" alt=\"").append(esc(skill.cleanName)).append("\" class=\"skill-icon\" />\n");
+                }
+                html.append("          <span>").append(esc(skill.cleanName)).append("</span>\n");
+                html.append("        </div>\n");
+            }
+
+            html.append("      </div>\n");
+            html.append("    </div>\n");
+        }
+
+        html.append("  </div>\n");
+        html.append("</section>");
+
+        return html.toString();
     }
 
     private String buildProjects(List<ProjectDTO> projects) {
