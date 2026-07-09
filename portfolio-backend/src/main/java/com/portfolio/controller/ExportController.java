@@ -27,6 +27,14 @@ public class ExportController {
         return (backendUrl != null ? backendUrl : "https://folio-backend-k6qf.onrender.com") + "/api/files/download/";
     }
 
+    private String resolveUrl(String url) {
+        if (url == null || url.isEmpty()) return "";
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+        return getFileBase() + url;
+    }
+
     private final ProfileService profileService;
 
     public ExportController(ProfileService profileService) {
@@ -58,7 +66,7 @@ public class ExportController {
         String phone   = esc(p.phone() != null ? p.phone() : "");
         String github  = esc(p.githubLink() != null ? p.githubLink() : "");
         String linkedin= esc(p.linkedinLink() != null ? p.linkedinLink() : "");
-        String imgUrl  = p.profileImageUrl() != null ? getFileBase() + p.profileImageUrl() : "";
+        String imgUrl  = p.profileImageUrl() != null ? resolveUrl(p.profileImageUrl()) : "";
         String roles   = esc(p.roles() != null ? p.roles() : title);
 
         String skillsHtml   = buildSkills(p.skills());
@@ -352,7 +360,7 @@ public class ExportController {
 
   // Typewriter
   (function(){
-    const roles = %s.split(',').map(s=>s.trim()).filter(Boolean);
+    const roles = "%s".split(',').map(s=>s.trim()).filter(Boolean);
     const el = document.getElementById('typed-role');
     if(!el||!roles.length) return;
     let ri=0, ci=0, del=false;
@@ -695,7 +703,7 @@ public class ExportController {
         if (achs == null || achs.isEmpty()) return "";
         String cards = achs.stream().map(a -> {
             String img = a.mediaUrl()!=null&&!a.mediaUrl().isEmpty()
-                ? "<img class=\"ach-img\" src=\"" + getFileBase() + esc(a.mediaUrl()) + "\" alt=\"proof\" />" : "";
+                ? "<img class=\"ach-img\" src=\"" + esc(resolveUrl(a.mediaUrl())) + "\" alt=\"proof\" />" : "";
             String date = a.associatedDate()!=null&&!a.associatedDate().isEmpty()
                 ? "<span class=\"ach-date\">" + esc(a.associatedDate()) + "</span>" : "";
             return """
