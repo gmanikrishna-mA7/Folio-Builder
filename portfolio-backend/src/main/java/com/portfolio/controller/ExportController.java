@@ -124,7 +124,7 @@ public class ExportController {
     .hero-name { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; background: linear-gradient(to right,#818cf8,#c084fc,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height: 1.1; }
     .hero-role { font-size: 1rem; color: #94a3b8; font-family: monospace; margin-top: .75rem; }
     .hero-role span { color: var(--cyan); font-weight: 700; border-right: 2px solid var(--cyan); padding-right: 2px; animation: blink 1s step-start infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes blink { 0%%,100%%{opacity:1} 50%%{opacity:0} }
     .hero-bio { font-size: .85rem; color: #94a3b8; line-height: 1.7; margin-top: 1rem; max-width: 440px; }
     .hero-btns { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
     .btn-green { background: var(--green); color: #fff; font-weight: 700; font-size: .875rem; padding: .75rem 1.75rem; border-radius: .5rem; border: none; cursor: pointer; transition: background .2s; }
@@ -133,17 +133,17 @@ public class ExportController {
     .btn-ghost:hover { color: #fff; background: rgba(0,0,0,.4); }
     /* Hero image */
     .hero-img-wrap { display:flex; justify-content:flex-end; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    @keyframes float { 0%%,100%%{transform:translateY(0)} 50%%{transform:translateY(-12px)} }
     .hero-img-circle {
       width: clamp(200px,30vw,300px); height: clamp(200px,30vw,300px);
-      border-radius: 50%; overflow: hidden;
+      border-radius: 50%%; overflow: hidden;
       border: 4px solid rgba(255,255,255,.1);
       box-shadow: 0 25px 60px rgba(0,0,0,.5);
       animation: float 6s ease-in-out infinite;
       background: linear-gradient(135deg,#1e293b,#0f172a);
       display: flex; align-items: center; justify-content: center;
     }
-    .hero-img-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .hero-img-circle img { width:100%%; height:100%%; object-fit:cover; border-radius:50%%; }
     .hero-initials { font-size: 3rem; font-weight: 900; color: #475569; }
     /* ── Skills ── */
     .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 1rem; }
