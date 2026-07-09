@@ -56,6 +56,30 @@ export default function Dashboard() {
     fetchPortfolios();
   };
 
+  const handleDownloadHtml = async (slug) => {
+    if (!slug) {
+      alert("Error: Portfolio slug is not available.");
+      return;
+    }
+    try {
+      const response = await api.get(`/api/public/portfolio/${slug}/export`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${slug}-portfolio.html`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download HTML:', err);
+      alert('Failed to download the HTML portfolio file. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -171,6 +195,31 @@ export default function Dashboard() {
                       >
                         Delete
                       </button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      <button
+                        onClick={() => handleDownloadHtml(port.slug)}
+                        className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-500/30 py-2 text-[10px] font-semibold text-indigo-300 hover:text-white transition"
+                      >
+                        📥 HTML
+                      </button>
+                      <a
+                        href="https://app.netlify.com/drop"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center justify-center gap-1.5 text-center rounded-lg bg-teal-950/40 hover:bg-teal-900/60 border border-[#00ad9f]/30 py-2 text-[10px] font-semibold text-teal-300 hover:text-white transition no-underline"
+                      >
+                        🟢 Netlify
+                      </a>
+                      <a
+                        href="https://vercel.com/new"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center justify-center gap-1.5 text-center rounded-lg bg-slate-900/60 hover:bg-slate-800 border border-white/10 py-2 text-[10px] font-semibold text-slate-300 hover:text-white transition no-underline"
+                      >
+                        ▲ Vercel
+                      </a>
                     </div>
                   </div>
                 ))}
