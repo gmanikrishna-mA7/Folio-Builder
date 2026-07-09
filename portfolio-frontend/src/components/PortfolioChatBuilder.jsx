@@ -3,6 +3,7 @@ import api from '../api/axiosConfig';
 
 export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   const chatEndRef = useRef(null);
+  const [activePortfolioId, setActivePortfolioId] = useState(portfolioId);
 
   // Default state matching ProfileDTO & extended fields
   const [portfolioData, setPortfolioData] = useState({
@@ -96,6 +97,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
+    setActivePortfolioId(portfolioId);
     if (portfolioId) {
       // 1. Edit Mode: Load details and jump directly to review summary
       api.get(`/api/profile/${portfolioId}`)
@@ -557,10 +559,18 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
     };
 
     try {
-      if (portfolioId) {
-        await api.put(`/api/profile/${portfolioId}`, finalData);
+      let response;
+      if (activePortfolioId) {
+        response = await api.put(`/api/profile/${activePortfolioId}`, finalData);
       } else {
-        await api.post('/api/profile', finalData);
+        response = await api.post('/api/profile', finalData);
+      }
+      const savedProfile = response.data;
+      if (savedProfile) {
+        setPortfolioData(savedProfile);
+        if (savedProfile.id) {
+          setActivePortfolioId(savedProfile.id);
+        }
       }
       setSaveStatus('success');
       
@@ -582,6 +592,31 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
     navigator.clipboard.writeText(link);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const handleDownloadHtml = async (e) => {
+    e.preventDefault();
+    if (!portfolioData.slug) {
+      alert("Error: Portfolio slug is not available. Please save your portfolio first.");
+      return;
+    }
+    try {
+      const response = await api.get(`/api/public/portfolio/${portfolioData.slug}/export`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${portfolioData.slug}-portfolio.html`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download HTML:', err);
+      alert('Failed to download the HTML portfolio file. Please try again.');
+    }
   };
 
   return (
@@ -644,15 +679,15 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
 
                 {/* Download HTML */}
-                <a
-                  href={`${import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com'}/api/public/portfolio/${portfolioData.slug}/export`}
-                  download={`${portfolioData.slug}-portfolio.html`}
-                  className="flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-600 text-white font-semibold text-xs transition shadow-lg shadow-indigo-700/20 no-underline text-center"
+                <button
+                  type="button"
+                  onClick={handleDownloadHtml}
+                  className="flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-600 text-white font-semibold text-xs transition shadow-lg shadow-indigo-700/20 text-center w-full"
                 >
                   <span className="text-xl">📥</span>
                   <span>Download HTML</span>
                   <span className="text-[9px] font-normal text-indigo-200">Self-contained file</span>
-                </a>
+                </button>
 
                 {/* Netlify Drop */}
                 <a
@@ -711,11 +746,11 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-indigo-400 animate-ping"></span>
           <p className="text-sm font-semibold text-slate-200">
-            {portfolioId ? 'Folio Editor Console' : 'Folio Design Engine'}
+            {activePortfolioId ? 'Folio Editor Console' : 'Folio Design Engine'}
           </p>
         </div>
         <p className="text-xs text-slate-500 font-mono">
-          {portfolioId ? 'Review Mode' : `Step ${currentStep} / 10`}
+          {activePortfolioId ? 'Review Mode' : `Step ${currentStep} / 10`}
         </p>
       </div>
 
@@ -1357,7 +1392,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
             {msg.sender === 'bot' && msg.type === 'summary' && currentStep === 10 && (
               <div className="ml-4 mt-2 max-w-[95%] rounded-xl bg-slate-900/60 p-6 border border-white/5 space-y-5 shadow-2xl">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  {portfolioId ? '✏️ Edit Portfolio' : 'Review & Publish Portfolio'}
+                  {activePortfolioId ? '✏️ Edit Portfolio' : 'Review & Publish Portfolio'}
                 </h3>
 
                 <div className="space-y-5 text-xs">
@@ -1760,7 +1795,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
                     disabled={isSaving || !portfolioData.name || (!portfolioData.title && !portfolioData.roles)}
                     className="w-full flex items-center justify-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 text-xs transition disabled:opacity-50 shadow-lg shadow-indigo-600/25"
                   >
-                    {isSaving ? 'Saving...' : portfolioId ? '💾 Save Changes' : '🚀 Save & Publish Portfolio'}
+                    {isSaving ? 'Saving...' : activePortfolioId ? '💾 Save Changes' : '🚀 Save & Publish Portfolio'}
                   </button>
                 </div>
 
