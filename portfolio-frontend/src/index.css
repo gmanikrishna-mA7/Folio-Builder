@@ -1,0 +1,115 @@
+/* Custom global overrides for premium experience */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Fira+Code:wght@300..700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  background-color: #030712; /* Extreme dark / pitch black background */
+  color: #f3f4f6;
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar for high-end look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
+
+/* Glassmorphism utility — adapts to the user's custom --bg-rgb variable */
+.glass {
+  background: rgba(var(--bg-rgb, 15, 23, 42), 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Slightly stronger card for sections that need more contrast */
+.glass-card {
+  background: rgba(var(--bg-rgb, 15, 23, 42), 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Hero avatar floating animation */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Organic morphing shape border-radius animation */
+@keyframes morphing-blob {
+  0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+
+.morphing-avatar {
+  animation: morphing-blob 8s ease-in-out infinite, float 6s ease-in-out infinite;
+  transition: all 0.5s ease-in-out;
+}
+
+.morphing-ring-outer {
+  animation: morphing-blob 10s ease-in-out infinite alternate, spin 16s linear infinite;
+}
+
+.morphing-ring-inner {
+  animation: morphing-blob 8s ease-in-out infinite alternate-reverse, spin 12s linear infinite reverse;
+}
+
+/* Special ending-edge glow animation for cards */
+.ending-edge-animate {
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.ending-edge-animate::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-bottom: 2px solid #6366f1;
+  border-right: 2px solid #06b6d4;
+  border-bottom-right-radius: 12px;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0.55;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.4));
+  z-index: 5;
+}
+
+.ending-edge-animate:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 30px -5px rgba(6, 182, 212, 0.15), 0 8px 16px -6px rgba(99, 102, 241, 0.15);
+}
+
+.ending-edge-animate:hover::after {
+  width: 75%;
+  height: 75%;
+  opacity: 1;
+  border-bottom-color: #06b6d4;
+  border-right-color: #a855f7;
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
+}
