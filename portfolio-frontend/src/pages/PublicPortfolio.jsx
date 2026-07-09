@@ -453,7 +453,7 @@ export default function PublicPortfolio() {
               {/* Animated Role Typewriter */}
               <div className="h-8 flex items-center">
                 <p className="text-lg sm:text-xl text-slate-300 font-mono">
-                  I am a <span className="font-bold text-[#22d3ee] font-mono border-r-2 border-[#22d3ee] animate-pulse pr-1">{typedText}</span>|
+                  I am a <span className="font-bold text-[#22d3ee] font-mono">{typedText}</span><span className="text-[#22d3ee] font-bold animate-pulse">|</span>
                 </p>
               </div>
 
@@ -490,22 +490,26 @@ export default function PublicPortfolio() {
 
                 {/* Morphing image container */}
                 <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-white/10 shadow-2xl shadow-black/50 group-hover:border-[#10b981]/40 transition-all duration-500 z-10 morphing-avatar">
-                  {(profile.profileImageUrl || profile.profile_image_url) ? (
-                    <img
-                      src={getImageUrl(profile.profileImageUrl || profile.profile_image_url)}
-                      alt={profile.name}
-                      className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                      style={{ objectPosition: 'center 15%' }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-5xl font-extrabold text-slate-500 select-none">
-                      {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'GT'}
-                    </div>
-                  )}
+                  {(() => {
+                    const img = profile.profileImageUrl || profile.profile_image_url;
+                    const hasImage = img && img.trim() !== '' && img !== 'null' && img !== 'undefined';
+                    return hasImage ? (
+                      <img
+                        src={getImageUrl(img)}
+                        alt={profile.name}
+                        className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                        style={{ objectPosition: 'center 15%' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-5xl font-extrabold text-slate-500 select-none">
+                        {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'GT'}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Outer concentric dashed ring (Slow clockwise spin + morph) */}
