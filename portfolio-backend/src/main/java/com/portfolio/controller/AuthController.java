@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @org.springframework.beans.factory.annotation.Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
+
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
@@ -121,6 +124,6 @@ public class AuthController {
         String token = jwtUtils.generateToken(user.getEmail());
         
         // Redirect back to frontend OAuth2 redirect handler
-        response.sendRedirect("http://localhost:5173/oauth2/redirect?token=" + token);
+        response.sendRedirect(frontendUrl + "/oauth2/redirect?token=" + token);
     }
 }

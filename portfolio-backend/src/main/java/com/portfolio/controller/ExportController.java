@@ -20,7 +20,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/public/portfolio")
 public class ExportController {
 
-    private static final String FILE_BASE = "http://localhost:8080/api/files/download/";
+    @org.springframework.beans.factory.annotation.Value("${app.backend.url:https://folio-backend-k6qf.onrender.com}")
+    private String backendUrl;
+
+    private String getFileBase() {
+        return (backendUrl != null ? backendUrl : "https://folio-backend-k6qf.onrender.com") + "/api/files/download/";
+    }
 
     private final ProfileService profileService;
 
@@ -53,7 +58,7 @@ public class ExportController {
         String phone   = esc(p.phone() != null ? p.phone() : "");
         String github  = esc(p.githubLink() != null ? p.githubLink() : "");
         String linkedin= esc(p.linkedinLink() != null ? p.linkedinLink() : "");
-        String imgUrl  = p.profileImageUrl() != null ? FILE_BASE + p.profileImageUrl() : "";
+        String imgUrl  = p.profileImageUrl() != null ? getFileBase() + p.profileImageUrl() : "";
         String roles   = esc(p.roles() != null ? p.roles() : title);
 
         String skillsHtml   = buildSkills(p.skills());
@@ -516,7 +521,7 @@ public class ExportController {
         if (achs == null || achs.isEmpty()) return "";
         String cards = achs.stream().map(a -> {
             String img = a.mediaUrl()!=null&&!a.mediaUrl().isEmpty()
-                ? "<img class=\"ach-img\" src=\"" + FILE_BASE + esc(a.mediaUrl()) + "\" alt=\"proof\" />" : "";
+                ? "<img class=\"ach-img\" src=\"" + getFileBase() + esc(a.mediaUrl()) + "\" alt=\"proof\" />" : "";
             String date = a.associatedDate()!=null&&!a.associatedDate().isEmpty()
                 ? "<span class=\"ach-date\">" + esc(a.associatedDate()) + "</span>" : "";
             return """
