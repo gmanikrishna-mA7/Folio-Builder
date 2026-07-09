@@ -5,7 +5,8 @@ import api from '../api/axiosConfig';
 // Explicit URL resolver to fetch file assets from the backend server
 const getImageUrl = (url) => {
   if (!url) return null;
-  return url.startsWith('http') ? url : `http://localhost:8080/api/files/download/${url}`;
+  const backendUrl = import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com';
+  return url.startsWith('http') ? url : `${backendUrl}/api/files/download/${url}`;
 };
 
 export default function PublicPortfolio() {

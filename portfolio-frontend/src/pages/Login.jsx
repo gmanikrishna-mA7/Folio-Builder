@@ -29,7 +29,7 @@ export default function Login() {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else if (err.message === 'Network Error' || !err.response) {
-        setError('Failed to connect to the backend server. Please verify that your Spring Boot application is running on port 8080.');
+        setError('Failed to connect to the backend server. Please verify that your backend server is running.');
       } else {
         setError('Invalid email or password combination.');
       }
@@ -41,7 +41,8 @@ export default function Login() {
   const handleGoogleLogin = (e) => {
     e.preventDefault();
     // Redirect browser to the backend mock Google OAuth endpoint
-    window.location.href = 'http://localhost:8080/api/auth/google/mock';
+    const backendUrl = import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com';
+    window.location.href = `${backendUrl}/api/auth/google/mock`;
   };
 
   return (

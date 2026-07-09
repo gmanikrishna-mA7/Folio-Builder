@@ -645,7 +645,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
 
                 {/* Download HTML */}
                 <a
-                  href={`http://localhost:8080/api/public/portfolio/${portfolioData.slug}/export`}
+                  href={`${import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com'}/api/public/portfolio/${portfolioData.slug}/export`}
                   download={`${portfolioData.slug}-portfolio.html`}
                   className="flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-600 text-white font-semibold text-xs transition shadow-lg shadow-indigo-700/20 no-underline text-center"
                 >
