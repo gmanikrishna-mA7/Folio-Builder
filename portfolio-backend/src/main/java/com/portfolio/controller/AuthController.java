@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "https://foliobuilder.vercel.app")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
