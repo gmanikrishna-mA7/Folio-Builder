@@ -131,8 +131,8 @@ public class ExportController {
     .hero-greeting { font-size: .75rem; text-transform: uppercase; letter-spacing: .18em; color: #475569; font-family: monospace; display: block; margin-bottom: .5rem; }
     .hero-name { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; background: linear-gradient(to right,#818cf8,#c084fc,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height: 1.1; }
     .hero-role { font-size: 1rem; color: #94a3b8; font-family: monospace; margin-top: .75rem; }
-    .hero-role span { color: var(--cyan); font-weight: 700; border-right: 2px solid var(--cyan); padding-right: 2px; animation: blink 1s step-start infinite; }
-    @keyframes blink { 0%%,100%%{opacity:1} 50%%{opacity:0} }
+    .hero-role span { color: var(--cyan); font-weight: 700; border-right: 2px solid var(--cyan); padding-right: 4px; animation: cursor-blink 1.2s step-end infinite; }
+    @keyframes cursor-blink { 0%%,100%% { border-color: var(--cyan); } 50%% { border-color: transparent; } }
     .hero-bio { font-size: .85rem; color: #94a3b8; line-height: 1.7; margin-top: 1rem; max-width: 440px; }
     .hero-btns { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
     .btn-green { background: var(--green); color: #fff; font-weight: 700; font-size: .875rem; padding: .75rem 1.75rem; border-radius: .5rem; border: none; cursor: pointer; transition: background .2s; }
@@ -347,7 +347,7 @@ public class ExportController {
   <section id="about">
     <h2 class="sec-heading">About Me</h2>
     <div class="glass" style="padding:2rem; display:flex; flex-direction:column; gap:1rem;">
-      <h3 style="font-size:1rem; font-weight:700; color:#818cf8;">%s</h3>
+      <!-- title: %s -->
       <p style="font-size:.85rem; color:rgba(255,255,255,.55); line-height:1.75; white-space:pre-line;">%s</p>
       <div style="display:flex; gap:1.5rem; flex-wrap:wrap; padding-top:.75rem; border-top:1px solid rgba(255,255,255,.06); font-size:.75rem; font-weight:700;">
         %s
@@ -402,6 +402,8 @@ public class ExportController {
         <p class="contact-card-label">Direct Contact</p>
         %s
         <div style="display:flex; flex-direction:column; gap:.6rem; margin-top:.5rem;">
+          %s
+          %s
           %s
           %s
         </div>
@@ -518,6 +520,7 @@ public class ExportController {
             email.isEmpty() ? "" : "<a href=\"mailto:" + email + "\" style=\"display:flex;align-items:center;gap:.75rem;color:#fff;font-weight:700;font-size:1rem;\">&#9993; " + email + "</a>",
             phone.isEmpty() ? "" : "<a href=\"tel:" + phone + "\" class=\"social-row\"><span class=\"icon-wrap\">&#128222; " + phone + "</span> &#8599;</a>",
             linkedin.isEmpty()? "" : "<a href=\"" + linkedin + "\" target=\"_blank\" class=\"social-row\"><span class=\"icon-wrap\">&#128279; LinkedIn</span> &#8599;</a>",
+            github.isEmpty()? "" : "<a href=\"" + github + "\" target=\"_blank\" class=\"social-row\"><span class=\"icon-wrap\">&#128279; GitHub</span> &#8599;</a>",
             java.time.Year.now().getValue(), name,
             roles // for JS typewriter
         );
@@ -553,12 +556,10 @@ public class ExportController {
                     .anyMatch(lang -> nameLower.equals(lang) || nameLower.startsWith(lang + " ") || nameLower.endsWith(" " + lang))) {
                 category = "Programming Languages";
             }
-            // Database check
             else if (java.util.Arrays.asList("mysql", "postgresql", "postgres", "mongodb", "mongo", "oracle", "redis", "sqlite", "mariadb", "sql", "nosql", "db").stream()
                     .anyMatch(db -> nameLower.contains(db))) {
                 category = "Database";
             }
-            // Tools check
             else if (java.util.Arrays.asList("git", "github", "docker", "kubernetes", "k8s", "aws", "gcp", "azure", "jenkins", "jira", "postman", "vscode", "maven", "gradle", "npm", "yarn").stream()
                     .anyMatch(tool -> nameLower.contains(tool))) {
                 category = "Tools";
@@ -578,6 +579,7 @@ public class ExportController {
         java.util.Map<String, String> mappings = new java.util.HashMap<>();
         mappings.put("python", "python/python-original.svg");
         mappings.put("java", "java/java-original.svg");
+        mappings.put("java script", "javascript/javascript-original.svg");
         mappings.put("javascript", "javascript/javascript-original.svg");
         mappings.put("js", "javascript/javascript-original.svg");
         mappings.put("typescript", "typescript/typescript-original.svg");
@@ -596,7 +598,6 @@ public class ExportController {
         mappings.put("html5", "html5/html5-original.svg");
         mappings.put("css", "css3/css3-original.svg");
         mappings.put("css3", "css3/css3-original.svg");
-        
         mappings.put("react", "react/react-original.svg");
         mappings.put("reactjs", "react/react-original.svg");
         mappings.put("react.js", "react/react-original.svg");
@@ -615,7 +616,6 @@ public class ExportController {
         mappings.put("tailwind", "tailwindcss/tailwindcss-original.svg");
         mappings.put("tailwindcss", "tailwindcss/tailwindcss-original.svg");
         mappings.put("bootstrap", "bootstrap/bootstrap-original.svg");
-        
         mappings.put("mysql", "mysql/mysql-original.svg");
         mappings.put("postgresql", "postgresql/postgresql-original.svg");
         mappings.put("postgres", "postgresql/postgresql-original.svg");
@@ -625,7 +625,6 @@ public class ExportController {
         mappings.put("oracle", "oracle/oracle-original.svg");
         mappings.put("sqlite", "sqlite/sqlite-original.svg");
         mappings.put("mariadb", "mariadb/mariadb-original.svg");
-        
         mappings.put("git", "git/git-original.svg");
         mappings.put("github", "github/github-original.svg");
         mappings.put("docker", "docker/docker-original.svg");
@@ -641,11 +640,15 @@ public class ExportController {
         mappings.put("maven", "maven/maven-original.svg");
         mappings.put("npm", "npm/npm-original-wordmark.svg");
 
-        String path = null;
-        for (String key : mappings.keySet()) {
-            if (name.equals(key) || name.contains(key)) {
-                path = mappings.get(key);
-                break;
+        String path = mappings.get(name);
+        if (path == null) {
+            java.util.List<String> sortedKeys = new java.util.ArrayList<>(mappings.keySet());
+            sortedKeys.sort((a, b) -> b.length() - a.length());
+            for (String key : sortedKeys) {
+                if (name.contains(key)) {
+                    path = mappings.get(key);
+                    break;
+                }
             }
         }
 

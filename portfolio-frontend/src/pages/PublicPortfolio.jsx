@@ -242,6 +242,7 @@ export default function PublicPortfolio() {
     const mappings = {
       'python': 'python/python-original.svg',
       'java': 'java/java-original.svg',
+      'java script': 'javascript/javascript-original.svg',
       'javascript': 'javascript/javascript-original.svg',
       'js': 'javascript/javascript-original.svg',
       'typescript': 'typescript/typescript-original.svg',
@@ -306,10 +307,13 @@ export default function PublicPortfolio() {
       'npm': 'npm/npm-original-wordmark.svg'
     };
 
-    let path = null;
-    const cleanKey = Object.keys(mappings).find(key => name === key || name.includes(key));
-    if (cleanKey) {
-      path = mappings[cleanKey];
+    let path = mappings[name];
+    if (!path) {
+      const sortedKeys = Object.keys(mappings).sort((a, b) => b.length - a.length);
+      const cleanKey = sortedKeys.find(key => name === key || name.includes(key));
+      if (cleanKey) {
+        path = mappings[cleanKey];
+      }
     }
 
     if (path) {
@@ -453,7 +457,7 @@ export default function PublicPortfolio() {
               {/* Animated Role Typewriter */}
               <div className="h-8 flex items-center">
                 <p className="text-lg sm:text-xl text-slate-300 font-mono">
-                  I am a <span className="font-bold text-[#22d3ee] font-mono">{typedText}</span><span className="text-[#22d3ee] font-bold animate-pulse">|</span>
+                  I am a <span className="font-bold text-[#22d3ee] font-mono">{typedText}</span><span className="text-[#22d3ee] font-bold custom-cursor">|</span>
                 </p>
               </div>
 
@@ -529,7 +533,6 @@ export default function PublicPortfolio() {
           
           <div className="glass rounded-2xl p-8 border border-white/5 space-y-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-indigo-300">{profile.title}</h3>
               <p className="text-sm leading-relaxed text-slate-400 whitespace-pre-line leading-relaxed">
                 {profile.bio || 'No biography details provided.'}
               </p>

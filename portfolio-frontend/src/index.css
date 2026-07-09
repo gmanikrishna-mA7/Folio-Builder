@@ -113,3 +113,12 @@ body {
   border-right-color: #a855f7;
   filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
 }
+
+/* Slow, realistic step cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.custom-cursor {
+  animation: cursor-blink 1.2s step-end infinite;
+}
