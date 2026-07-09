@@ -66,7 +66,7 @@ public class ExportController {
         String phone   = esc(p.phone() != null ? p.phone() : "");
         String github  = esc(p.githubLink() != null ? p.githubLink() : "");
         String linkedin= esc(p.linkedinLink() != null ? p.linkedinLink() : "");
-        String imgUrl  = p.profileImageUrl() != null ? resolveUrl(p.profileImageUrl()) : "";
+        String imgUrl  = (p.profileImageUrl() != null && !p.profileImageUrl().trim().isEmpty() && !"null".equalsIgnoreCase(p.profileImageUrl().trim())) ? resolveUrl(p.profileImageUrl()) : "";
         String roles   = esc(p.roles() != null ? p.roles() : title);
 
         String skillsHtml   = buildSkills(p.skills());
@@ -420,17 +420,45 @@ public class ExportController {
     const c = document.getElementById('bg-canvas');
     const ctx = c.getContext('2d');
     let pts=[], W, H;
+    const mouse = { x: null, y: null, radius: 120 };
     function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
     resize(); window.addEventListener('resize', resize);
-    for(let i=0;i<70;i++) pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+    for(let i=0;i<75;i++) {
+      pts.push({
+        x: Math.random()*innerWidth,
+        y: Math.random()*innerHeight,
+        vx: (Math.random()-.5)*.5,
+        vy: (Math.random()-.5)*.5,
+        r: Math.random()*1.5 + 1
+      });
+    }
     function frame(){
-      c.width=W; // clear
-      pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
-        ctx.beginPath(); ctx.arc(p.x,p.y,1.2,0,Math.PI*2); ctx.fillStyle='rgba(129,140,248,.4)'; ctx.fill(); });
+      c.width=W;
+      pts.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        if(p.x<0||p.x>W) p.vx *= -1;
+        if(p.y<0||p.y>H) p.vy *= -1;
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            p.x += (dx / dist) * force * 0.7;
+            p.y += (dy / dist) * force * 0.7;
+          }
+        }
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(129,140,248,0.4)'; ctx.fill();
+      });
       pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
-        const d=Math.hypot(a.x-b.x,a.y-b.y);
-        if(d<120){ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-          ctx.strokeStyle=`rgba(129,140,248,${(1-d/120)*.1})`; ctx.lineWidth=.5; ctx.stroke(); }
+        const d = Math.hypot(a.x-b.x, a.y-b.y);
+        if(d<120){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(129,140,248,${(1-d/120)*.12})`; ctx.lineWidth=.6; ctx.stroke();
+        }
       }));
       requestAnimationFrame(frame);
     }
@@ -445,7 +473,7 @@ public class ExportController {
     let ri=0, ci=0, del=false;
     function tick(){
       const word = roles[ri]||'';
-      if(!del){ el.textContent=word.slice(0,++ci); if(ci>=word.length){del=true; setTimeout(tick,2400); return;} }
+      if(!del){ el.textContent=word.slice(0,++ci); if(ci>=word.length){del=true; setTimeout(tick,3500); return;} }
       else { el.textContent=word.slice(0,--ci); if(ci<=0){del=false; ri=(ri+1)%%roles.length;} }
       setTimeout(tick, del?50:100);
     }
