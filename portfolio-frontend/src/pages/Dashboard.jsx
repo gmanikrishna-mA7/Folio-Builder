@@ -198,12 +198,13 @@ export default function Dashboard() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 mt-2">
-                      <button
-                        onClick={() => handleDownloadHtml(port.slug)}
-                        className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-500/30 py-2 text-[10px] font-semibold text-indigo-300 hover:text-white transition"
+                      <a
+                        href={`${import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com'}/api/public/portfolio/${port.slug}/export`}
+                        download={`${port.slug}-portfolio.html`}
+                        className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-500/30 py-2 text-[10px] font-semibold text-indigo-300 hover:text-white transition no-underline"
                       >
                         📥 HTML
-                      </button>
+                      </a>
                       <a
                         href="https://app.netlify.com/drop"
                         target="_blank"

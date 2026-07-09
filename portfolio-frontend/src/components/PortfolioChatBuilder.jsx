@@ -679,15 +679,15 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
 
                 {/* Download HTML */}
-                <button
-                  type="button"
-                  onClick={handleDownloadHtml}
-                  className="flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-600 text-white font-semibold text-xs transition shadow-lg shadow-indigo-700/20 text-center w-full"
+                <a
+                  href={`${import.meta.env.VITE_API_URL || 'https://folio-backend-k6qf.onrender.com'}/api/public/portfolio/${portfolioData.slug}/export`}
+                  download={`${portfolioData.slug}-portfolio.html`}
+                  className="flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-600 text-white font-semibold text-xs transition shadow-lg shadow-indigo-700/20 text-center w-full no-underline"
                 >
                   <span className="text-xl">📥</span>
                   <span>Download HTML</span>
                   <span className="text-[9px] font-normal text-indigo-200">Self-contained file</span>
-                </button>
+                </a>
 
                 {/* Netlify Drop */}
                 <a
