@@ -140,19 +140,53 @@ public class ExportController {
     .btn-ghost { background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.12); color: #cbd5e1; font-weight: 600; font-size: .875rem; padding: .75rem 1.5rem; border-radius: .5rem; cursor: pointer; transition: all .2s; }
     .btn-ghost:hover { color: #fff; background: rgba(0,0,0,.4); }
     /* Hero image */
-    .hero-img-wrap { display:flex; justify-content:flex-end; }
+    .hero-img-wrap { display:flex; justify-content:center; }
     @keyframes float { 0%%,100%%{transform:translateY(0)} 50%%{transform:translateY(-12px)} }
+    
+    /* Organic morphing shape border-radius animation */
+    @keyframes morphing-blob {
+      0%% { border-radius: 60%% 40%% 30%% 70%% / 60%% 30%% 70%% 40%%; }
+      50%% { border-radius: 30%% 60%% 70%% 40%% / 50%% 60%% 30%% 60%%; }
+      100%% { border-radius: 60%% 40%% 30%% 70%% / 60%% 30%% 70%% 40%%; }
+    }
+    @keyframes spin {
+      100%% { transform: rotate(360deg); }
+    }
+    .avatar-glow {
+      position: absolute; inset: 0;
+      background: rgba(16,185,129,.2); filter: blur(24px); -webkit-filter: blur(24px);
+      scale: 1.1; pointer-events: none; transition: background .5s;
+    }
     .hero-img-circle {
-      width: clamp(200px,30vw,300px); height: clamp(200px,30vw,300px);
-      border-radius: 50%%; overflow: hidden;
-      border: 4px solid rgba(255,255,255,.1);
+      position: relative; width: 100%%; height: 100%%;
+      overflow: hidden; border: 4px solid rgba(255,255,255,.1);
       box-shadow: 0 25px 60px rgba(0,0,0,.5);
-      animation: float 6s ease-in-out infinite;
       background: linear-gradient(135deg,#1e293b,#0f172a);
       display: flex; align-items: center; justify-content: center;
+      z-index: 10;
     }
-    .hero-img-circle img { width:100%%; height:100%%; object-fit:cover; border-radius:50%%; }
+    .hero-img-circle img { width: 100%%; height: 100%%; object-fit: cover; }
+    .morphing-avatar {
+      animation: morphing-blob 8s ease-in-out infinite, float 6s ease-in-out infinite;
+      transition: all 0.5s ease-in-out;
+    }
+    .morphing-ring-outer {
+      position: absolute; inset: -16px; border: 2px dashed rgba(16,185,129,.3);
+      pointer-events: none; z-index: 0; transition: border-color .3s;
+      animation: morphing-blob 10s ease-in-out infinite alternate, spin 16s linear infinite;
+    }
+    .morphing-ring-inner {
+      position: absolute; inset: -10px; border: 1px dotted rgba(34,211,238,.4);
+      pointer-events: none; z-index: 0; transition: border-color .3s;
+      animation: morphing-blob 8s ease-in-out infinite alternate-reverse, spin 12s linear infinite reverse;
+    }
+    .hero-img-wrap:hover .avatar-glow { background: rgba(16,185,129,.3); }
+    .hero-img-wrap:hover .hero-img-circle { border-color: rgba(16,185,129,.4); }
+    .hero-img-wrap:hover .morphing-ring-outer { border-color: rgba(16,185,129,.5); }
+    .hero-img-wrap:hover .morphing-ring-inner { border-color: rgba(34,211,238,.6); }
+
     .hero-initials { font-size: 3rem; font-weight: 900; color: #475569; }
+    
     /* ── Skills ── */
     .skill-category-group { margin-bottom: 2rem; }
     .skill-category-title { font-size: .75rem; text-transform: uppercase; font-weight: 700; letter-spacing: .15em; color: #818cf8; font-family: monospace; margin-bottom: 1rem; padding-left: .25rem; }
@@ -164,10 +198,45 @@ public class ExportController {
     }
     .skill-card:hover { border-color: rgba(99,102,241,.4); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99,102,241,.05); }
     .skill-icon { width: 1.25rem; height: 1.25rem; object-fit: contain; filter: brightness(.95); }
+    
+    /* ── Special ending-edge glow animation for cards ── */
+    .ending-edge-animate {
+      position: relative;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .ending-edge-animate::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 40px;
+      height: 40px;
+      border-bottom: 2px solid #6366f1;
+      border-right: 2px solid #06b6d4;
+      border-bottom-right-radius: 12px;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0.55;
+      filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.4));
+      z-index: 5;
+    }
+    .ending-edge-animate:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(99,102,241,.35);
+      box-shadow: 0 12px 30px -5px rgba(6, 182, 212, 0.15), 0 8px 16px -6px rgba(99, 102, 241, 0.15);
+    }
+    .ending-edge-animate:hover::after {
+      width: 75%%;
+      height: 75%%;
+      opacity: 1;
+      border-bottom-color: #06b6d4;
+      border-right-color: #a855f7;
+      filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
+    }
+
     /* ── Projects ── */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5rem; }
-    .project-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem; transition:all .25s; }
-    .project-card:hover { border-color: rgba(99,102,241,.35); transform: translateY(-3px); }
+    .project-card { background:rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.08); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
     .project-title { font-size: 1rem; font-weight: 700; color: #fff; }
     .project-desc { font-size: .8rem; color: #94a3b8; line-height: 1.6; }
     .tech-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
@@ -193,17 +262,15 @@ public class ExportController {
     .grade-badge { display:inline-block; font-size:.65rem; font-family:monospace; background:rgba(0,0,0,.35); border:1px solid rgba(34,211,238,.25); color: var(--cyan); padding:.15rem .5rem; border-radius:.25rem; margin-top:.3rem; }
     /* ── Certificates ── */
     .cert-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:1rem; }
-    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.25rem; display:flex; gap:1rem; align-items:flex-start; transition:all .2s; }
-    .cert-card:hover { border-color:rgba(16,185,129,.3); transform:translateY(-2px); }
+    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.25rem; display:flex; gap:1rem; align-items:flex-start; }
     .cert-icon { width:2.5rem; height:2.5rem; border-radius:.6rem; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .cert-name { font-size:.8rem; font-weight:700; color:#fff; }
     .cert-issuer { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.35); font-family:monospace; }
     .cert-link { font-size:.65rem; font-weight:700; color:var(--green); margin-top:.4rem; display:block; }
     /* ── Achievements ── */
     .ach-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:1.5rem; }
-    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; position:relative; overflow:hidden; transition:all .25s; }
+    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; position:relative; overflow:hidden; }
     .ach-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,transparent,rgba(34,211,238,.35),transparent); }
-    .ach-card:hover { border-color:rgba(34,211,238,.3); transform:translateY(-2px); }
     .ach-tag { display:inline-block; font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; padding:.3rem .7rem; border-radius:999px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); margin-bottom:.75rem; }
     .ach-title { font-size:1.15rem; font-weight:800; color:#fff; line-height:1.3; }
     .ach-desc { font-size:.78rem; color:rgba(255,255,255,.45); line-height:1.65; margin-top:.5rem; }
@@ -257,9 +324,21 @@ public class ExportController {
         <a href="#projects" class="btn-ghost">Explore Projects</a>
       </div>
     </div>
-    <div class="hero-img-wrap">
-      <div class="hero-img-circle">
-        %s
+    <div class="hero-img-wrap" style="display:flex; justify-content:center; align-items:center; position:relative;">
+      <div style="position:relative; width:clamp(200px,30vw,300px); height:clamp(200px,30vw,300px); margin:2rem auto;">
+        <!-- Ambient glow behind morphing blob -->
+        <div class="avatar-glow morphing-avatar"></div>
+
+        <!-- Morphing image container -->
+        <div class="hero-img-circle morphing-avatar">
+          %s
+        </div>
+
+        <!-- Outer concentric dashed ring (Slow clockwise spin + morph) -->
+        <div class="morphing-ring-outer"></div>
+
+        <!-- Inner concentric dotted ring (Fast counter-clockwise spin + morph) -->
+        <div class="morphing-ring-inner"></div>
       </div>
     </div>
   </section>
@@ -343,7 +422,7 @@ public class ExportController {
     let pts=[], W, H;
     function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
     resize(); window.addEventListener('resize', resize);
-    for(let i=0;i<70;i++) pts.push({x:Math.random()*1e4,y:Math.random()*1e4,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});
+    for(let i=0;i<70;i++) pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});
     function frame(){
       c.width=W; // clear
       pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
@@ -613,7 +692,7 @@ public class ExportController {
               + (pr.liveLink()!=null&&!pr.liveLink().isEmpty()
                 ? "<a href=\"" + esc(pr.liveLink()) + "\" target=\"_blank\" style=\"color:#22d3ee;\">Live Demo &rarr;</a>" : "");
             return """
-<div class="project-card">
+<div class="project-card ending-edge-animate">
   <div>
     <p class="project-title">%s</p>
     <p class="project-desc">%s</p>
@@ -678,7 +757,7 @@ public class ExportController {
             String link = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
                 ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\">Verify &#8599;</a>" : "";
             return """
-<div class="cert-card">
+<div class="cert-card ending-edge-animate">
   <div class="cert-icon">
     <svg width="22" height="22" fill="none" stroke="#10b981" stroke-width="1.8" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
@@ -707,7 +786,7 @@ public class ExportController {
             String date = a.associatedDate()!=null&&!a.associatedDate().isEmpty()
                 ? "<span class=\"ach-date\">" + esc(a.associatedDate()) + "</span>" : "";
             return """
-<div class="ach-card">
+<div class="ach-card ending-edge-animate">
   <span class="ach-tag">Achievement</span>
   <p class="ach-title">%s</p>
   %s
