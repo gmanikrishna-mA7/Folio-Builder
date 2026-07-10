@@ -451,7 +451,7 @@ public class ExportController {
       <button class="tab-btn active" onclick="switchTab('experience')">Work Experience</button>
       <button class="tab-btn" onclick="switchTab('education')">Education</button>
     </div>
-    <div class="glass" style="padding:2rem; min-height:200px;">
+    <div class="glass ending-edge-animate" style="padding:2rem; min-height:200px;">
       <div id="tab-experience" class="timeline-panel active">
         <p style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#818cf8; font-family:monospace; margin-bottom:1.5rem;">Professional History</p>
         %s
