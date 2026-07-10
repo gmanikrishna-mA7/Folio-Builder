@@ -1015,7 +1015,7 @@ public class ExportController {
                 </svg>""";
                 
             String verifyLink = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
-                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + "; text-decoration:none;\">Verify &rarr;</a>" : "";
+                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + "; text-decoration:none; display:inline-block; margin-top:0;\">Verify &rarr;</a>" : "";
             
             String viewFileLink = "";
             String certImgHtml = "";
@@ -1026,7 +1026,7 @@ public class ExportController {
                         "<img src=\"" + certImgSrc + "\" alt=\"" + esc(c.name()) + "\" " +
                         "style=\"width:100%;height:100%;object-fit:cover;\">" +
                         "</div>";
-                    viewFileLink = "<a href=\"" + esc(certImgSrc) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:#22d3ee; text-decoration:none;\">View File &rarr;</a>";
+                    viewFileLink = "<a href=\"" + esc(certImgSrc) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:#22d3ee; text-decoration:none; display:inline-block; margin-top:0;\">View File &rarr;</a>";
                 }
             }
             
