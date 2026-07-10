@@ -122,3 +122,53 @@ body {
 .custom-cursor {
   animation: cursor-blink 1.2s step-end infinite;
 }
+
+/* ── Glow Pulse Animation ── */
+@keyframes glow-pulse-anim {
+  0%, 100% { transform: scale(1); opacity: 0.2; filter: blur(24px); }
+  50% { transform: scale(1.15); opacity: 0.45; filter: blur(32px); }
+}
+.glow-pulse-glow {
+  animation: glow-pulse-anim 4s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+.glow-pulse-avatar {
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(34, 211, 238, 0.4);
+  transition: all 0.3s;
+}
+.glow-pulse-avatar:hover {
+  box-shadow: 0 0 45px rgba(34, 211, 238, 0.7);
+  border-color: #ffffff;
+}
+
+/* ── Float Bounce Animation ── */
+@keyframes float-bounce-anim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes shadow-shrink {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(0.85); opacity: 0.15; }
+}
+.float-avatar {
+  animation: float-bounce-anim 5s ease-in-out infinite;
+}
+.shadow-shrink {
+  animation: shadow-shrink 5s ease-in-out infinite;
+}
+
+/* ── Rotating Squircle Animation ── */
+@keyframes squircle-morph {
+  0%, 100% { border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
+  50% { border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%; }
+}
+.squircle-glow {
+  animation: squircle-morph 6s ease-in-out infinite;
+}
+.squircle-avatar {
+  border-radius: 42%;
+  animation: squircle-morph 6s ease-in-out infinite;
+  transition: all 0.4s;
+}

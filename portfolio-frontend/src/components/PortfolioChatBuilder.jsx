@@ -20,6 +20,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
     email: '',
     phone: '',
     fontFamily: 'sans',
+    avatarAnimation: 'morphing-rings',
     skills: [],
     projects: [],
     experiences: [],
@@ -110,6 +111,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
             email: data.email || '',
             phone: data.phone || '',
             fontFamily: data.fontFamily || 'sans',
+            avatarAnimation: data.avatarAnimation || 'morphing-rings',
             skills: data.skills || [],
             projects: data.projects || [],
             experiences: data.experiences || [],
@@ -1397,8 +1399,8 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
 
                 <div className="space-y-5 text-xs">
 
-                  {/* ── Theme & Font ── */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-slate-950 border border-white/5">
+                  {/* ── Theme, Font & Animation ── */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 rounded-lg bg-slate-950 border border-white/5">
                     <div>
                       <label className="block text-[9px] text-slate-500 uppercase font-semibold mb-1">Background Theme Color</label>
                       <div className="flex gap-2 items-center">
@@ -1418,6 +1420,18 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
                         <option value="sans">Inter / Sans (Tech Minimalist)</option>
                         <option value="serif">Playfair Display / Serif (Editorial)</option>
                         <option value="mono">Fira Code / Mono (Developer)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-500 uppercase font-semibold mb-1">Avatar Image Animation</label>
+                      <select value={portfolioData.avatarAnimation || 'morphing-rings'}
+                        onChange={(e) => setPortfolioData({ ...portfolioData, avatarAnimation: e.target.value })}
+                        className="w-full rounded bg-slate-900 border border-white/10 px-3 py-1.5 text-xs text-white focus:outline-none">
+                        <option value="morphing-rings">Morphing Rings (Recommended)</option>
+                        <option value="glow-pulse">Ambient Glowing Pulse</option>
+                        <option value="spin-portal">Glowing Spin Portal</option>
+                        <option value="float-bounce">Floating Bounce Avatar</option>
+                        <option value="square-rotate">Interactive Rotating Squircle</option>
                       </select>
                     </div>
                   </div>

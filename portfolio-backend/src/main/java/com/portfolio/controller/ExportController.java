@@ -143,7 +143,7 @@ public class ExportController {
     .hero-img-wrap { display:flex; justify-content:center; }
     @keyframes float { 0%%,100%%{transform:translateY(0)} 50%%{transform:translateY(-12px)} }
     
-    /* Organic morphing shape border-radius animation */
+    /* ── Morphing Rings Animation ── */
     @keyframes morphing-blob {
       0%% { border-radius: 60%% 40%% 30%% 70%% / 60%% 30%% 70%% 40%%; }
       50%% { border-radius: 30%% 60%% 70%% 40%% / 50%% 60%% 30%% 60%%; }
@@ -184,6 +184,100 @@ public class ExportController {
     .hero-img-wrap:hover .hero-img-circle { border-color: rgba(16,185,129,.4); }
     .hero-img-wrap:hover .morphing-ring-outer { border-color: rgba(16,185,129,.5); }
     .hero-img-wrap:hover .morphing-ring-inner { border-color: rgba(34,211,238,.6); }
+
+    /* ── Glow Pulse Animation ── */
+    @keyframes glow-pulse-anim {
+      0%%, 100%% { transform: scale(1); opacity: 0.2; filter: blur(24px); }
+      50%% { transform: scale(1.15); opacity: 0.45; filter: blur(32px); }
+    }
+    .glow-pulse-glow {
+      position: absolute; inset: 0; border-radius: 50%%;
+      background: radial-gradient(circle, var(--cyan), #818cf8);
+      animation: glow-pulse-anim 4s ease-in-out infinite;
+      z-index: 0; pointer-events: none;
+    }
+    .glow-pulse-avatar {
+      border-radius: 50%%; border: 4px solid var(--cyan);
+      box-shadow: 0 0 25px rgba(34,211,238,0.4);
+      transition: all 0.3s;
+    }
+    .glow-pulse-avatar:hover {
+      box-shadow: 0 0 45px rgba(34,211,238,0.7);
+      border-color: #fff;
+    }
+
+    /* ── Spin Portal Animation ── */
+    .portal-glow {
+      position: absolute; inset: 0; border-radius: 50%%;
+      background: rgba(192, 132, 252, 0.15); filter: blur(20px);
+      z-index: 0;
+    }
+    .portal-ring {
+      position: absolute; border-radius: 50%%; pointer-events: none;
+    }
+    .portal-ring.portal-spin-clockwise {
+      inset: -14px; border: 3px double transparent;
+      border-top-color: #c084fc; border-bottom-color: #818cf8;
+      animation: spin 10s linear infinite;
+    }
+    .portal-ring.portal-spin-counter {
+      inset: -8px; border: 1.5px dashed transparent;
+      border-left-color: var(--cyan); border-right-color: #10b981;
+      animation: spin 6s linear infinite reverse;
+    }
+    .portal-avatar {
+      border-radius: 50%%; border: 4px solid rgba(192, 132, 252, 0.4);
+      transition: border-color 0.4s;
+    }
+    .hero-img-wrap:hover .portal-avatar {
+      border-color: #c084fc;
+    }
+
+    /* ── Float Bounce Animation ── */
+    @keyframes float-bounce-anim {
+      0%%, 100%% { transform: translateY(0); }
+      50%% { transform: translateY(-15px); }
+    }
+    @keyframes shadow-shrink {
+      0%%, 100%% { transform: scale(1); opacity: 0.3; }
+      50%% { transform: scale(0.85); opacity: 0.15; }
+    }
+    .float-glow {
+      position: absolute; inset: 0; border-radius: 50%%;
+      background: rgba(16, 185, 129, 0.15); filter: blur(20px);
+      animation: float-bounce-anim 5s ease-in-out infinite;
+    }
+    .float-avatar {
+      border-radius: 50%%; border: 4px solid rgba(255, 255, 255, 0.15);
+      animation: float-bounce-anim 5s ease-in-out infinite;
+    }
+    .float-shadow {
+      position: absolute; bottom: -20px; left: 10%%; right: 10%%; height: 10px;
+      background: rgba(0,0,0,0.5); filter: blur(6px); border-radius: 50%%;
+      animation: shadow-shrink 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ── Rotating Squircle Animation ── */
+    @keyframes squircle-morph {
+      0%%, 100%% { border-radius: 40%% 60%% 60%% 40%% / 40%% 40%% 60%% 60%%; }
+      50%% { border-radius: 60%% 40%% 40%% 60%% / 60%% 60%% 40%% 40%%; }
+    }
+    .squircle-glow {
+      position: absolute; inset: 0;
+      background: rgba(99, 102, 241, 0.2); filter: blur(24px);
+      animation: squircle-morph 6s ease-in-out infinite;
+    }
+    .squircle-avatar {
+      border-radius: 42%%; border: 4px solid rgba(99, 102, 241, 0.4);
+      animation: squircle-morph 6s ease-in-out infinite;
+      transition: all 0.4s;
+    }
+    .hero-img-wrap:hover .squircle-avatar {
+      transform: rotate(15deg);
+      border-color: #818cf8;
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    }
 
     .hero-initials { font-size: 3rem; font-weight: 900; color: #475569; }
     
@@ -326,19 +420,7 @@ public class ExportController {
     </div>
     <div class="hero-img-wrap" style="display:flex; justify-content:center; align-items:center; position:relative;">
       <div style="position:relative; width:clamp(200px,30vw,300px); height:clamp(200px,30vw,300px); margin:2rem auto;">
-        <!-- Ambient glow behind morphing blob -->
-        <div class="avatar-glow morphing-avatar"></div>
-
-        <!-- Morphing image container -->
-        <div class="hero-img-circle morphing-avatar">
-          %s
-        </div>
-
-        <!-- Outer concentric dashed ring (Slow clockwise spin + morph) -->
-        <div class="morphing-ring-outer"></div>
-
-        <!-- Inner concentric dotted ring (Fast counter-clockwise spin + morph) -->
-        <div class="morphing-ring-inner"></div>
+        %s
       </div>
     </div>
   </section>
@@ -510,8 +592,7 @@ public class ExportController {
             p.achievements()!=null&&!p.achievements().isEmpty() ? "<a href=\"#achievements\">Achievements</a>" : "",
             name,              // hero h1
             bio.isEmpty() ? "" : "<p class=\"hero-bio\">" + bio.split("\\.")[0] + ".</p>",
-            imgUrl.isEmpty() ? "<span class=\"hero-initials\">" + (name.length()>=2?name.substring(0,2).toUpperCase():"GT") + "</span>"
-                             : "<img src=\"" + imgUrl + "\" alt=\"" + name + "\" />",
+            buildAvatarHtml(imgUrl, name, p.avatarAnimation()),
             title, bio,        // about section
             github.isEmpty() ? "" : "<a href=\"" + github + "\" target=\"_blank\" style=\"color:#818cf8;\">GitHub Profile</a>",
             linkedin.isEmpty()? "" : "<a href=\"" + linkedin + "\" target=\"_blank\" style=\"color:#818cf8;\">LinkedIn Profile</a>",
@@ -529,6 +610,63 @@ public class ExportController {
             java.time.Year.now().getValue(), name,
             roles // for JS typewriter
         );
+    }
+
+    private String buildAvatarHtml(String imgUrl, String name, String anim) {
+        String initials = name.length() >= 2 ? name.substring(0, 2).toUpperCase() : "GT";
+        String content = imgUrl.isEmpty() 
+            ? "<span class=\"hero-initials\">" + initials + "</span>"
+            : "<img src=\"" + imgUrl + "\" alt=\"" + name + "\" />";
+            
+        String animation = anim != null ? anim.trim().toLowerCase() : "morphing-rings";
+        
+        switch (animation) {
+            case "glow-pulse":
+                return """
+                <div class="avatar-glow glow-pulse-glow"></div>
+                <div class="hero-img-circle glow-pulse-avatar">
+                  %s
+                </div>
+                """.formatted(content);
+                
+            case "spin-portal":
+                return """
+                <div class="avatar-glow portal-glow"></div>
+                <div class="portal-ring portal-spin-clockwise"></div>
+                <div class="portal-ring portal-spin-counter"></div>
+                <div class="hero-img-circle portal-avatar">
+                  %s
+                </div>
+                """.formatted(content);
+                
+            case "float-bounce":
+                return """
+                <div class="avatar-glow float-glow"></div>
+                <div class="hero-img-circle float-avatar">
+                  %s
+                </div>
+                <div class="float-shadow"></div>
+                """.formatted(content);
+                
+            case "square-rotate":
+                return """
+                <div class="avatar-glow squircle-glow"></div>
+                <div class="hero-img-circle squircle-avatar">
+                  %s
+                </div>
+                """.formatted(content);
+                
+            case "morphing-rings":
+            default:
+                return """
+                <div class="avatar-glow morphing-avatar"></div>
+                <div class="hero-img-circle morphing-avatar">
+                  %s
+                </div>
+                <div class="morphing-ring-outer"></div>
+                <div class="morphing-ring-inner"></div>
+                """.formatted(content);
+        }
     }
 
     // ──────────────────────────────────────────────────────────────────────────

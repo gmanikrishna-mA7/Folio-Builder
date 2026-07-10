@@ -38,6 +38,8 @@ public record ProfileDTO(
 
     String fontFamily,
 
+    String avatarAnimation,
+
     @Valid
     List<SkillDTO> skills,
 

@@ -384,6 +384,106 @@ export default function PublicPortfolio() {
         </div>
       </div>
     );
+  const renderAvatar = () => {
+    const img = profile.profileImageUrl || profile.profile_image_url;
+    const hasImage = img && img.trim() !== '' && img !== 'null' && img !== 'undefined';
+    const content = hasImage ? (
+      <img
+        src={getImageUrl(img)}
+        alt={profile.name}
+        className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+        style={{ objectPosition: 'center 15%' }}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.style.display = 'none';
+        }}
+      />
+    ) : (
+      <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-5xl font-extrabold text-slate-500 select-none">
+        {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'GT'}
+      </div>
+    );
+
+    const anim = profile.avatarAnimation ? profile.avatarAnimation.trim().toLowerCase() : 'morphing-rings';
+
+    switch (anim) {
+      case 'glow-pulse':
+        return (
+          <>
+            {/* Ambient glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full glow-pulse-glow" />
+            
+            {/* Image container */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-cyan-400 shadow-2xl glow-pulse-avatar z-10">
+              {content}
+            </div>
+          </>
+        );
+      case 'spin-portal':
+        return (
+          <>
+            {/* Glow */}
+            <div className="absolute inset-0 bg-purple-500/15 blur-2xl rounded-full z-0 pointer-events-none" />
+            
+            {/* Spinning portal rings */}
+            <div className="absolute -inset-4 border-[3px] border-double border-transparent border-t-purple-400 border-b-indigo-400 rounded-full animate-[spin_10s_linear_infinite] z-0 pointer-events-none" />
+            <div className="absolute -inset-2 border border-dashed border-transparent border-l-cyan-400 border-r-emerald-400 rounded-full animate-[spin_6s_linear_infinite_reverse] z-0 pointer-events-none" />
+            
+            {/* Image container */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-purple-500/40 group-hover:border-purple-500 shadow-2xl rounded-full transition-colors duration-500 z-10">
+              {content}
+            </div>
+          </>
+        );
+      case 'float-bounce':
+        return (
+          <>
+            {/* Glow */}
+            <div className="absolute inset-0 bg-emerald-500/15 blur-2xl rounded-full z-0 float-avatar pointer-events-none" />
+            
+            {/* Image container */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-white/15 shadow-2xl rounded-full float-avatar z-10">
+              {content}
+            </div>
+            
+            {/* Bottom shadow */}
+            <div className="absolute -bottom-5 left-[10%] right-[10%] h-2.5 bg-black/50 blur-sm rounded-full shadow-shrink pointer-events-none" />
+          </>
+        );
+      case 'square-rotate':
+        return (
+          <>
+            {/* Glow */}
+            <div className="absolute inset-0 bg-indigo-500/25 blur-3xl rounded-[40%] squircle-glow pointer-events-none" />
+            
+            {/* Image container */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-indigo-500/40 group-hover:border-indigo-400 group-hover:rotate-[15deg] group-hover:shadow-indigo-500/40 shadow-2xl squircle-avatar transition-all duration-500 z-10">
+              {content}
+            </div>
+          </>
+        );
+      case 'morphing-rings':
+      default:
+        return (
+          <>
+            {/* Ambient glow behind morphing blob */}
+            <div className="absolute inset-0 bg-[#10b981]/25 blur-3xl scale-110 pointer-events-none group-hover:bg-[#10b981]/35 transition-colors duration-500 morphing-avatar" />
+
+            {/* Morphing image container */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-white/10 shadow-2xl shadow-black/50 group-hover:border-[#10b981]/40 transition-all duration-500 z-10 morphing-avatar">
+              {content}
+            </div>
+
+            {/* Outer concentric dashed ring (Slow clockwise spin + morph) */}
+            <div className="absolute -inset-4 border-2 border-dashed border-[#10b981]/30 pointer-events-none z-0 group-hover:border-[#10b981]/50 transition-colors morphing-ring-outer" />
+
+            {/* Inner concentric dotted ring (Fast counter-clockwise spin + morph) */}
+            <div className="absolute -inset-2.5 border border-dotted border-cyan-400/40 pointer-events-none z-0 group-hover:border-cyan-400/60 transition-colors morphing-ring-inner" />
+          </>
+        );
+    }
+  };
+
   }
 
   return (
@@ -485,42 +585,10 @@ export default function PublicPortfolio() {
               </div>
             </div>
 
-            {/* Right Column — Morphing Organic Profile Image with Dual Concentric Spinning Rings */}
+            {/* Right Column — Profile Image Container */}
             <div className="flex justify-center md:justify-end">
               <div className="relative group">
-                
-                {/* Ambient glow behind morphing blob */}
-                <div className="absolute inset-0 bg-[#10b981]/25 blur-3xl scale-110 pointer-events-none group-hover:bg-[#10b981]/35 transition-colors duration-500 morphing-avatar" />
-
-                {/* Morphing image container */}
-                <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 overflow-hidden border-4 border-white/10 shadow-2xl shadow-black/50 group-hover:border-[#10b981]/40 transition-all duration-500 z-10 morphing-avatar">
-                  {(() => {
-                    const img = profile.profileImageUrl || profile.profile_image_url;
-                    const hasImage = img && img.trim() !== '' && img !== 'null' && img !== 'undefined';
-                    return hasImage ? (
-                      <img
-                        src={getImageUrl(img)}
-                        alt={profile.name}
-                        className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                        style={{ objectPosition: 'center 15%' }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-5xl font-extrabold text-slate-500 select-none">
-                        {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'GT'}
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* Outer concentric dashed ring (Slow clockwise spin + morph) */}
-                <div className="absolute -inset-4 border-2 border-dashed border-[#10b981]/30 pointer-events-none z-0 group-hover:border-[#10b981]/50 transition-colors morphing-ring-outer" />
-
-                {/* Inner concentric dotted ring (Fast counter-clockwise spin + morph) */}
-                <div className="absolute -inset-2.5 border border-dotted border-cyan-400/40 pointer-events-none z-0 group-hover:border-cyan-400/60 transition-colors morphing-ring-inner" />
+                {renderAvatar()}
               </div>
             </div>
 

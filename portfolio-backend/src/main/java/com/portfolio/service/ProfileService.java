@@ -75,6 +75,7 @@ public class ProfileService {
                 .email(dto.email())
                 .phone(dto.phone())
                 .fontFamily(dto.fontFamily())
+                .avatarAnimation(dto.avatarAnimation())
                 .user(user)
                 .build();
 
@@ -159,6 +160,7 @@ public class ProfileService {
         profile.setEmail(dto.email());
         profile.setPhone(dto.phone());
         profile.setFontFamily(dto.fontFamily());
+        profile.setAvatarAnimation(dto.avatarAnimation());
 
         // Update slug if modified, maintaining uniqueness
         if (dto.slug() != null && !dto.slug().trim().isEmpty() && !dto.slug().equals(profile.getSlug())) {
@@ -331,6 +333,7 @@ public class ProfileService {
                 profile.getEmail(),
                 profile.getPhone(),
                 profile.getFontFamily(),
+                profile.getAvatarAnimation(),
                 skillDTOs,
                 projectDTOs,
                 experienceDTOs,

@@ -48,6 +48,9 @@ public class Profile {
     @Column(name = "font_family")
     private String fontFamily = "sans";
 
+    @Column(name = "avatar_animation")
+    private String avatarAnimation = "morphing-rings";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -72,7 +75,7 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(Long id, String name, String title, String bio, String profileImageUrl, String resumeUrl, String githubLink, String linkedinLink, String slug, String backgroundColor, String roles, String email, String phone, String fontFamily, User user, List<Skill> skills, List<Project> projects, List<Experience> experiences, List<Certificate> certificates, List<Education> educations, List<Achievement> achievements) {
+    public Profile(Long id, String name, String title, String bio, String profileImageUrl, String resumeUrl, String githubLink, String linkedinLink, String slug, String backgroundColor, String roles, String email, String phone, String fontFamily, String avatarAnimation, User user, List<Skill> skills, List<Project> projects, List<Experience> experiences, List<Certificate> certificates, List<Education> educations, List<Achievement> achievements) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -87,6 +90,7 @@ public class Profile {
         this.email = email;
         this.phone = phone;
         this.fontFamily = fontFamily != null ? fontFamily : "sans";
+        this.avatarAnimation = avatarAnimation != null ? avatarAnimation : "morphing-rings";
         this.user = user;
         if (skills != null) this.skills = skills;
         if (projects != null) this.projects = projects;
@@ -142,6 +146,9 @@ public class Profile {
 
     public String getFontFamily() { return fontFamily; }
     public void setFontFamily(String fontFamily) { this.fontFamily = fontFamily; }
+
+    public String getAvatarAnimation() { return avatarAnimation; }
+    public void setAvatarAnimation(String avatarAnimation) { this.avatarAnimation = avatarAnimation; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
@@ -200,6 +207,7 @@ public class Profile {
         private String email;
         private String phone;
         private String fontFamily;
+        private String avatarAnimation;
         private User user;
         private List<Skill> skills = new ArrayList<>();
         private List<Project> projects = new ArrayList<>();
@@ -222,6 +230,7 @@ public class Profile {
         public ProfileBuilder email(String email) { this.email = email; return this; }
         public ProfileBuilder phone(String phone) { this.phone = phone; return this; }
         public ProfileBuilder fontFamily(String fontFamily) { this.fontFamily = fontFamily; return this; }
+        public ProfileBuilder avatarAnimation(String avatarAnimation) { this.avatarAnimation = avatarAnimation; return this; }
         public ProfileBuilder user(User user) { this.user = user; return this; }
         public ProfileBuilder skills(List<Skill> skills) { this.skills = skills; return this; }
         public ProfileBuilder projects(List<Project> projects) { this.projects = projects; return this; }
@@ -231,7 +240,7 @@ public class Profile {
         public ProfileBuilder achievements(List<Achievement> achievements) { this.achievements = achievements; return this; }
 
         public Profile build() {
-            return new Profile(id, name, title, bio, profileImageUrl, resumeUrl, githubLink, linkedinLink, slug, backgroundColor, roles, email, phone, fontFamily, user, skills, projects, experiences, certificates, educations, achievements);
+            return new Profile(id, name, title, bio, profileImageUrl, resumeUrl, githubLink, linkedinLink, slug, backgroundColor, roles, email, phone, fontFamily, avatarAnimation, user, skills, projects, experiences, certificates, educations, achievements);
         }
     }
 }
