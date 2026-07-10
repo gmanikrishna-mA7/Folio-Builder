@@ -381,7 +381,7 @@ public class ExportController {
     @media (min-width: 768px) {
       .cert-grid { grid-template-columns: repeat(3, 1fr); }
     }
-    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; text-align:left; min-height:200px; }
+    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; display:flex; flex-direction:column; gap:.75rem; text-align:left; min-height:200px; }
     .cert-card.cyber { border-color: rgba(16,185,129,0.3) !important; animation: pulse-slow 4s infinite; }
     .cert-card.cyber:hover { border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16,185,129,0.15), 0 12px 30px -5px rgba(6, 182, 212, 0.15) !important; }
     .cert-icon { width:2.5rem; height:2.5rem; border-radius:.6rem; background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#818cf8; }
@@ -474,6 +474,7 @@ public class ExportController {
       <!-- title: %s -->
       <p style="font-size:.85rem; color:rgba(255,255,255,.55); line-height:1.75; white-space:pre-line;">%s</p>
       <div style="display:flex; gap:1.5rem; flex-wrap:wrap; padding-top:.75rem; border-top:1px solid rgba(255,255,255,.06); font-size:.75rem; font-weight:700;">
+        %s
         %s
         %s
       </div>
@@ -632,11 +633,12 @@ public class ExportController {
             p.certificates()!=null&&!p.certificates().isEmpty() ? "<a href=\"#certificates\">Certificates</a>" : "",
             p.achievements()!=null&&!p.achievements().isEmpty() ? "<a href=\"#achievements\">Achievements</a>" : "",
             name,              // hero h1
-            bio.isEmpty() ? "" : "<p class=\"hero-bio\">" + bio.split("\\.")[0] + ".</p>",
+            "",  // No bio in hero (matches React site — bio only shown in About section)
             buildAvatarHtml(imgUrl, name, p.avatarAnimation()),
             title, bio,        // about section
             github.isEmpty() ? "" : "<a href=\"" + github + "\" target=\"_blank\" style=\"color:#818cf8;\">GitHub Profile</a>",
             linkedin.isEmpty()? "" : "<a href=\"" + linkedin + "\" target=\"_blank\" style=\"color:#818cf8;\">LinkedIn Profile</a>",
+            (p.resumeUrl() != null && !p.resumeUrl().isEmpty() ? "<a href=\"" + esc(resolveUrl(p.resumeUrl())) + "\" download=\"" + esc(name) + "-Resume.pdf\" style=\"color:#10b981; font-weight:700;\">Resume &#8599;</a>" : ""),  // resume link in about
             skillsHtml,
             projectsHtml,
             expHtml, eduHtml,
@@ -992,17 +994,29 @@ public class ExportController {
             String link = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
                 ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + ";\">Verify &rarr;</a>" : "";
             
+            // Certificate image — base64-encoded via resolveUrl so it works offline
+            String certImgHtml = "";
+            if (c.filePath() != null && !c.filePath().trim().isEmpty()) {
+                String certImgSrc = resolveUrl(c.filePath());
+                if (!certImgSrc.isEmpty()) {
+                    certImgHtml = "<div style=\"width:100%;height:8rem;border-radius:.75rem;overflow:hidden;border:1px solid rgba(255,255,255,.08);margin-top:.75rem;\">" +
+                        "<img src=\"" + certImgSrc + "\" alt=\"" + esc(c.name()) + "\" " +
+                        "style=\"width:100%;height:100%;object-fit:cover;\">" +
+                        "</div>";
+                }
+            }
             return """
 <div class="%s">
   <div class="%s">
     %s
   </div>
-  <div>
+  <div style="flex:1;">
     <p class="cert-name">%s</p>
     <p class="cert-issuer">%s</p>
     %s
+    %s
   </div>
-</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), link);
+</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), link, certImgHtml);
         }).collect(Collectors.joining("\n"));
         return """
 <section id="certificates">
