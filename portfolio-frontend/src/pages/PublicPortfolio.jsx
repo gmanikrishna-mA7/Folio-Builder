@@ -693,11 +693,13 @@ export default function PublicPortfolio() {
                   
                   <div className="space-y-3 pt-4 border-t border-white/5">
                     <div className="flex flex-wrap gap-1">
-                      {proj.techStack.split(',').map((tech, idx) => (
-                        <span key={idx} className="border border-white/10 text-[9px] text-white/50 px-2 py-0.5 rounded font-mono" style={{ background: 'rgba(0,0,0,0.30)' }}>
-                          {tech.trim()}
-                        </span>
-                      ))}
+                      {proj.techStack && proj.techStack.trim() !== '' ? (
+                        proj.techStack.split(',').map((tech, idx) => (
+                          <span key={idx} className="border border-white/10 text-[9px] text-white/50 px-2 py-0.5 rounded font-mono" style={{ background: 'rgba(0,0,0,0.30)' }}>
+                            {tech.trim()}
+                          </span>
+                        ))
+                      ) : null}
                     </div>
                     <div className="flex gap-4 text-xs font-semibold pt-1">
                       {proj.githubLink && (
