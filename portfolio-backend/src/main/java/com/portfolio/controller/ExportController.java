@@ -538,8 +538,8 @@ public class ExportController {
 
 <!-- Lightbox Modal for Certificate / Proof View -->
 <div id="cert-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(2,6,23,0.95); align-items:center; justify-content:center; padding:2rem; backdrop-filter:blur(8px); transition: opacity 0.25s ease;">
-  <div style="position:relative; max-width:90%; max-height:90%; display:flex; flex-direction:column; align-items:center; gap:1rem;">
-    <img id="cert-modal-img" src="" style="max-width:100%; max-height:75vh; object-fit:contain; border-radius:12px; border:2px solid rgba(255,255,255,0.15); box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);" />
+  <div style="position:relative; max-width:90%%; max-height:90%%; display:flex; flex-direction:column; align-items:center; gap:1rem;">
+    <img id="cert-modal-img" src="" style="max-width:100%%; max-height:75vh; object-fit:contain; border-radius:12px; border:2px solid rgba(255,255,255,0.15); box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);" />
     <button onclick="closeCertModal()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#fff; padding:0.6rem 1.5rem; border-radius:9999px; font-weight:600; font-size:0.8rem; cursor:pointer; backdrop-filter:blur(4px); transition: all 0.2s; outline:none;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">&times; Close Preview</button>
   </div>
 </div>
