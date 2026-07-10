@@ -467,19 +467,24 @@ public class ExportController {
     frame();
   })();
 
-  // Typewriter
+  // Role switcher (Fade transition)
   (function(){
     const roles = "%s".split(',').map(s=>s.trim()).filter(Boolean);
     const el = document.getElementById('typed-role');
     if(!el||!roles.length) return;
-    let ri=0, ci=0, del=false;
-    function tick(){
-      const word = roles[ri]||'';
-      if(!del){ el.textContent=word.slice(0,++ci); if(ci>=word.length){del=true; setTimeout(tick,3500); return;} }
-      else { el.textContent=word.slice(0,--ci); if(ci<=0){del=false; ri=(ri+1)%%roles.length;} }
-      setTimeout(tick, del?50:100);
-    }
-    tick();
+    el.style.transition = 'opacity 0.3s ease';
+    el.style.opacity = '1';
+    let ri = 0;
+    el.textContent = roles[ri];
+    if (roles.length <= 1) return;
+    setInterval(() => {
+      el.style.opacity = '0';
+      setTimeout(() => {
+        ri = (ri + 1) %% roles.length;
+        el.textContent = roles[ri];
+        el.style.opacity = '1';
+      }, 300);
+    }, 3000);
   })();
 
   // Timeline tab switcher

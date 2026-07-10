@@ -20,51 +20,42 @@ export default function PublicPortfolio() {
   const [activeTab, setActiveTab] = useState('experience');
 
   // Typing effect state
-  const [typedText, setTypedText] = useState('');
   const [roleIndex, setRoleIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(100);
+  const [isFading, setIsFading] = useState(false);
 
   // Contact form state
   const [contactEmail, setContactEmail] = useState('');
   const [contactMsg, setContactMsg] = useState('');
   const [contactSuccess, setContactSuccess] = useState(false);
 
-  // 1. Asynchronous Character Typing Effect
+  // 1. Role Switching Effect (No character typing/deleting)
   useEffect(() => {
     if (!profile) return;
     
-    // Parse roles from comma-separated string or fall back to title
     const rolesList = profile.roles && profile.roles.trim() !== ''
       ? profile.roles.split(',').map((r) => r.trim()).filter((r) => r.length > 0)
       : [profile.title || 'Full Stack Engineer'];
 
-    let timer;
-    const currentFullText = rolesList[roleIndex] || 'Full Stack Engineer';
+    if (rolesList.length <= 1) return;
 
-    const handleType = () => {
-      if (!isDeleting) {
-        setTypedText(currentFullText.substring(0, typedText.length + 1));
-        setTypingSpeed(100);
-        if (typedText === currentFullText) {
-          timer = setTimeout(() => setIsDeleting(true), 2500);
-          return;
-        }
-      } else {
-        setTypedText(currentFullText.substring(0, typedText.length - 1));
-        setTypingSpeed(50);
-        if (typedText === '') {
-          setIsDeleting(false);
-          setRoleIndex((prev) => (prev + 1) % rolesList.length);
-          return;
-        }
-      }
-      timer = setTimeout(handleType, typingSpeed);
+    let timer;
+    let fadeTimer;
+
+    const switchRole = () => {
+      setIsFading(true);
+      fadeTimer = setTimeout(() => {
+        setRoleIndex((prev) => (prev + 1) % rolesList.length);
+        setIsFading(false);
+      }, 300);
     };
 
-    timer = setTimeout(handleType, typingSpeed);
-    return () => clearTimeout(timer);
-  }, [typedText, isDeleting, roleIndex, profile]);
+    timer = setInterval(switchRole, 3000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(fadeTimer);
+    };
+  }, [roleIndex, profile]);
 
   // 2. Fetch Portfolio details by Slug
   useEffect(() => {
@@ -457,7 +448,16 @@ export default function PublicPortfolio() {
               {/* Animated Role Typewriter */}
               <div className="h-8 flex items-center">
                 <p className="text-lg sm:text-xl text-slate-300 font-mono">
-                  I am a <span className="font-bold text-[#22d3ee] font-mono">{typedText}</span><span className="text-[#22d3ee] font-bold custom-cursor">|</span>
+                  {(() => {
+                    const rolesList = profile && profile.roles && profile.roles.trim() !== ''
+                      ? profile.roles.split(',').map((r) => r.trim()).filter((r) => r.length > 0)
+                      : profile ? [profile.title || 'Full Stack Engineer'] : ['Full Stack Engineer'];
+                    return (
+                      <>
+                        I am a <span className={`font-bold text-[#22d3ee] font-mono transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>{rolesList[roleIndex]}</span><span className="text-[#22d3ee] font-bold custom-cursor">|</span>
+                      </>
+                    );
+                  })()}
                 </p>
               </div>
 
