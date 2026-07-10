@@ -382,10 +382,14 @@ public class ExportController {
       .cert-grid { grid-template-columns: repeat(3, 1fr); }
     }
     .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; text-align:left; min-height:200px; }
-    .cert-icon { width:2.5rem; height:2.5rem; border-radius:.6rem; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cert-card.cyber { border-color: rgba(16,185,129,0.3) !important; animation: pulse-slow 4s infinite; }
+    .cert-card.cyber:hover { border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16,185,129,0.15), 0 12px 30px -5px rgba(6, 182, 212, 0.15) !important; }
+    .cert-icon { width:2.5rem; height:2.5rem; border-radius:.6rem; background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#818cf8; }
+    .cert-icon.cyber { background:rgba(16,185,129,.1) !important; border-color:rgba(16,185,129,.2) !important; color:#10b981 !important; }
     .cert-name { font-size:.8rem; font-weight:700; color:#fff; }
     .cert-issuer { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.35); font-family:monospace; }
     .cert-link { font-size:.65rem; font-weight:700; color:var(--green); margin-top:.4rem; display:block; }
+    @keyframes pulse-slow { 0%%, 100%% { opacity: 1; } 50%% { opacity: 0.85; } }
     /* ── Achievements ── */
     .ach-grid { display:grid; grid-template-columns: 1fr; gap:1.5rem; }
     @media (min-width: 768px) {
@@ -955,21 +959,37 @@ public class ExportController {
     private String buildCertificates(List<CertificateDTO> certs) {
         if (certs == null || certs.isEmpty()) return "";
         String cards = certs.stream().map(c -> {
+            String nameLower = (c.name() != null ? c.name() : "").toLowerCase();
+            boolean isCyber = nameLower.contains("cyber") || nameLower.contains("security") || nameLower.contains("hacking") || nameLower.contains("penetration");
+            
+            String cardClass = isCyber ? "cert-card ending-edge-animate cyber" : "cert-card ending-edge-animate";
+            String iconClass = isCyber ? "cert-icon cyber" : "cert-icon";
+            
+            String iconSvg = isCyber 
+                ? """
+                <svg width="22" height="22" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24" style="animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>"""
+                : """
+                <svg width="22" height="22" fill="none" stroke="#818cf8" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+                </svg>""";
+                
             String link = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
-                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\">Verify &#8599;</a>" : "";
+                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + ";\">Verify &rarr;</a>" : "";
+            
             return """
-<div class="cert-card ending-edge-animate">
-  <div class="cert-icon">
-    <svg width="22" height="22" fill="none" stroke="#10b981" stroke-width="1.8" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-    </svg>
+<div class="%s">
+  <div class="%s">
+    %s
   </div>
   <div>
     <p class="cert-name">%s</p>
     <p class="cert-issuer">%s</p>
     %s
   </div>
-</div>""".formatted(esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), link);
+</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), link);
         }).collect(Collectors.joining("\n"));
         return """
 <section id="certificates">
