@@ -32,6 +32,24 @@ public class ExportController {
         if (url.startsWith("http://") || url.startsWith("https://")) {
             return url;
         }
+        String[] possiblePaths = { "uploads", "portfolio-backend/uploads", "../portfolio-backend/uploads" };
+        for (String baseDir : possiblePaths) {
+            try {
+                java.nio.file.Path path = java.nio.file.Paths.get(baseDir, url);
+                if (java.nio.file.Files.exists(path)) {
+                    byte[] bytes = java.nio.file.Files.readAllBytes(path);
+                    String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
+                    String mimeType = "image/jpeg";
+                    if (url.toLowerCase().endsWith(".png")) mimeType = "image/png";
+                    else if (url.toLowerCase().endsWith(".gif")) mimeType = "image/gif";
+                    else if (url.toLowerCase().endsWith(".svg")) mimeType = "image/svg+xml";
+                    else if (url.toLowerCase().endsWith(".pdf")) mimeType = "application/pdf";
+                    return "data:" + mimeType + ";base64," + base64;
+                }
+            } catch (Exception e) {
+                // Ignore and try next
+            }
+        }
         return getFileBase() + url;
     }
 
@@ -329,8 +347,11 @@ public class ExportController {
     }
 
     /* ── Projects ── */
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5rem; }
-    .project-card { background:rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.08); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .projects-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media (min-width: 768px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .project-card { background:rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 240px; }
     .project-title { font-size: 1rem; font-weight: 700; color: #fff; }
     .project-desc { font-size: .8rem; color: #94a3b8; line-height: 1.6; }
     .tech-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
@@ -354,16 +375,23 @@ public class ExportController {
     .timeline-company { font-size:.75rem; color: rgba(255,255,255,.55); font-weight:600; }
     .timeline-desc { font-size:.75rem; color: rgba(255,255,255,.4); line-height:1.6; margin-top:.25rem; white-space:pre-line; }
     .grade-badge { display:inline-block; font-size:.65rem; font-family:monospace; background:rgba(0,0,0,.35); border:1px solid rgba(34,211,238,.25); color: var(--cyan); padding:.15rem .5rem; border-radius:.25rem; margin-top:.3rem; }
+    .timeline-container::after { border-bottom-right-radius: 1.5rem !important; }
     /* ── Certificates ── */
-    .cert-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:1rem; }
-    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.25rem; display:flex; gap:1rem; align-items:flex-start; }
+    .cert-grid { display:grid; grid-template-columns: 1fr; gap:1.5rem; }
+    @media (min-width: 768px) {
+      .cert-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .cert-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; text-align:left; min-height:200px; }
     .cert-icon { width:2.5rem; height:2.5rem; border-radius:.6rem; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .cert-name { font-size:.8rem; font-weight:700; color:#fff; }
     .cert-issuer { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.35); font-family:monospace; }
     .cert-link { font-size:.65rem; font-weight:700; color:var(--green); margin-top:.4rem; display:block; }
     /* ── Achievements ── */
-    .ach-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:1.5rem; }
-    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; position:relative; overflow:hidden; }
+    .ach-grid { display:grid; grid-template-columns: 1fr; gap:1.5rem; }
+    @media (min-width: 768px) {
+      .ach-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; text-align:left; min-height:280px; }
     .ach-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,transparent,rgba(34,211,238,.35),transparent); }
     .ach-tag { display:inline-block; font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; padding:.3rem .7rem; border-radius:999px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); margin-bottom:.75rem; }
     .ach-title { font-size:1.15rem; font-weight:800; color:#fff; line-height:1.3; }
@@ -451,7 +479,7 @@ public class ExportController {
       <button class="tab-btn active" onclick="switchTab('experience')">Work Experience</button>
       <button class="tab-btn" onclick="switchTab('education')">Education</button>
     </div>
-    <div class="glass ending-edge-animate" style="padding:2rem; min-height:200px;">
+    <div class="glass ending-edge-animate timeline-container" style="padding:2rem; min-height:250px; border-radius:1.5rem;">
       <div id="tab-experience" class="timeline-panel active">
         <p style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#818cf8; font-family:monospace; margin-bottom:1.5rem;">Professional History</p>
         %s
