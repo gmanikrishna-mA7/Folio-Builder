@@ -1,14 +1,27 @@
-# Step 1: Build the application using Maven
-FROM maven:3.8.5-openjdk-17 AS build
-COPY . .
+# ─── Stage 1: Build backend JAR ─────────────────────────────────────
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# 📁 Step into your exact backend folder
-WORKDIR /portfolio-backend
+WORKDIR /app
 
+# Copy backend source
+COPY portfolio-backend/pom.xml ./pom.xml
+COPY portfolio-backend/src ./src
+
+# Build the JAR (skip tests for Docker build speed)
 RUN mvn clean package -DskipTests
 
-# Step 2: Run the application using a stable Alpine Java 17 runtime
+# ─── Stage 2: Lean runtime image ────────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine
-COPY --from=build /portfolio-backend/target/*.jar app.jar
+
+WORKDIR /app
+
+# Copy built JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Create uploads directory for file persistence
+RUN mkdir -p /app/uploads
+
+# Expose backend port
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
