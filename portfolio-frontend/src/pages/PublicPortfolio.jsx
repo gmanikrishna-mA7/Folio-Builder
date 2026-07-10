@@ -384,6 +384,8 @@ export default function PublicPortfolio() {
         </div>
       </div>
     );
+  }
+
   const renderAvatar = () => {
     const img = profile.profileImageUrl || profile.profile_image_url;
     const hasImage = img && img.trim() !== '' && img !== 'null' && img !== 'undefined';
@@ -483,8 +485,6 @@ export default function PublicPortfolio() {
         );
     }
   };
-
-  }
 
   return (
     <div
@@ -612,6 +612,15 @@ export default function PublicPortfolio() {
                   <a href={profile.linkedinLink} target="_blank" rel="noreferrer" className="text-indigo-400 hover:text-indigo-300 hover:underline transition">
                     LinkedIn Profile
                   </a>
+                )}
+                {profile.resumeUrl && (
+                  <button
+                    onClick={handleDownloadResume}
+                    disabled={downloading}
+                    className="text-emerald-400 hover:text-emerald-300 hover:underline transition font-semibold"
+                  >
+                    {downloading ? 'Downloading…' : 'Resume ↗'}
+                  </button>
                 )}
               </div>
 
