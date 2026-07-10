@@ -487,7 +487,6 @@ public class ExportController {
           %s
           %s
           %s
-          %s
         </div>
       </div>
     </div>
