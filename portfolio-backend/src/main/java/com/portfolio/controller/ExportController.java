@@ -935,12 +935,33 @@ public class ExportController {
     private String buildExperiences(List<ExperienceDTO> experiences) {
         if (experiences == null || experiences.isEmpty())
             return "<p style=\"font-size:.75rem;color:rgba(255,255,255,.35);font-style:italic;\">No professional history added.</p>";
-        return "<div class=\"timeline-line\">" + experiences.stream().map(e -> """
+        return "<div class=\"timeline-line\">" + experiences.stream().map(e -> {
+            String mediaHtml = "";
+            if (e.mediaUrl() != null && !e.mediaUrl().trim().isEmpty()) {
+                String mediaSrc = resolveUrl(e.mediaUrl());
+                if (e.mediaUrl().toLowerCase().endsWith(".pdf")) {
+                    mediaHtml = """
+                    <div style="margin-top:0.75rem;">
+                      <a href="%s" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; border:1px solid rgba(99,102,241,0.3); background:rgba(99,102,241,0.15); color:#818cf8; font-size:0.75rem; padding:0.4rem 0.8rem; border-radius:0.375rem; font-weight:600; text-decoration:none;">
+                        &#128196; View Work Certificate/Proof
+                      </a>
+                    </div>""".formatted(esc(mediaSrc));
+                } else {
+                    mediaHtml = """
+                    <div style="margin-top:0.75rem;">
+                      <a href="%s" target="_blank" style="display:inline-block; border:1px solid rgba(255,255,255,0.08); border-radius:0.5rem; overflow:hidden; max-width:240px;">
+                        <img src="%s" alt="%s Certificate" style="max-height:144px; width:100%%; object-fit:cover; display:block;" />
+                      </a>
+                    </div>""".formatted(esc(mediaSrc), esc(mediaSrc), esc(e.company()));
+                }
+            }
+            return """
 <div class="timeline-item">
   <span class="timeline-dot"></span>
   <span class="timeline-badge">%s – %s</span>
   <p class="timeline-role">%s</p>
   <p class="timeline-company">%s</p>
+  %s
   %s
 </div>""".formatted(
                 esc(e.startDate()!=null?e.startDate():""),
@@ -948,8 +969,10 @@ public class ExportController {
                 esc(e.role()),
                 esc(e.company()),
                 e.description()!=null&&!e.description().isEmpty()
-                    ? "<p class=\"timeline-desc\">" + esc(e.description()) + "</p>" : ""
-            )).collect(Collectors.joining("\n")) + "</div>";
+                    ? "<p class=\"timeline-desc\">" + esc(e.description()) + "</p>" : "",
+                mediaHtml
+            );
+        }).collect(Collectors.joining("\n")) + "</div>";
     }
 
     private String buildEducations(List<EducationDTO> educations) {
@@ -991,10 +1014,10 @@ public class ExportController {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
                 </svg>""";
                 
-            String link = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
-                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + ";\">Verify &rarr;</a>" : "";
+            String verifyLink = c.credentialUrl()!=null&&!c.credentialUrl().isEmpty()
+                ? "<a href=\"" + esc(c.credentialUrl()) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:" + (isCyber ? "#10b981" : "#818cf8") + "; text-decoration:none;\">Verify &rarr;</a>" : "";
             
-            // Certificate image — base64-encoded via resolveUrl so it works offline
+            String viewFileLink = "";
             String certImgHtml = "";
             if (c.filePath() != null && !c.filePath().trim().isEmpty()) {
                 String certImgSrc = resolveUrl(c.filePath());
@@ -1003,8 +1026,15 @@ public class ExportController {
                         "<img src=\"" + certImgSrc + "\" alt=\"" + esc(c.name()) + "\" " +
                         "style=\"width:100%;height:100%;object-fit:cover;\">" +
                         "</div>";
+                    viewFileLink = "<a href=\"" + esc(certImgSrc) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:#22d3ee; text-decoration:none;\">View File &rarr;</a>";
                 }
             }
+            
+            String actionLinks = "";
+            if (!verifyLink.isEmpty() || !viewFileLink.isEmpty()) {
+                actionLinks = "<div style=\"display:flex; gap:1rem; margin-top:0.5rem;\">" + verifyLink + viewFileLink + "</div>";
+            }
+            
             return """
 <div class="%s">
   <div class="%s">
@@ -1016,7 +1046,7 @@ public class ExportController {
     %s
     %s
   </div>
-</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), link, certImgHtml);
+</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), certImgHtml, actionLinks);
         }).collect(Collectors.joining("\n"));
         return """
 <section id="certificates">
