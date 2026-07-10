@@ -720,14 +720,15 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
 
             {/* ── Footer buttons ── */}
             <div className="grid grid-cols-2 gap-3 pt-1 border-t border-white/5">
-              <a
-                href={`/public/portfolio/${portfolioData.slug}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full text-center py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all no-underline"
+              <button
+                onClick={() => {
+                  const slug = portfolioData.slug || 'mani';
+                  window.open(`${window.location.origin}/public/portfolio/${slug}`, '_blank');
+                }}
+                className="w-full text-center py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
               >
                 View Portfolio ↗
-              </a>
+              </button>
               <button
                 onClick={() => {
                   setShowDeployModal(false);

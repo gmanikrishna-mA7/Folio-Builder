@@ -643,7 +643,10 @@ public class ExportController {
             certHtml,
             achHtml,
             bio.isEmpty()?"I engineer performant, scalable full-stack systems — open for roles, contracts and collaborations.":bio,
-            email.isEmpty() ? "" : "<a href=\"mailto:" + email + "\" class=\"btn-green\">&#9993; Email me</a>",
+            (email.isEmpty() ? "" : "<a href=\"mailto:" + email + "\" class=\"btn-green\">&#9993; Email me</a>")
+                + (p.resumeUrl() != null && !p.resumeUrl().isEmpty()
+                    ? "<a href=\"" + esc(resolveUrl(p.resumeUrl())) + "\" download=\"" + esc(name) + "-Resume.pdf\" class=\"btn-ghost\" style=\"text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;\">&#128196; Resume</a>"
+                    : ""),
             email.isEmpty() ? "" : "<a href=\"mailto:" + email + "\" style=\"display:flex;align-items:center;gap:.75rem;color:#fff;font-weight:700;font-size:1rem;\">&#9993; " + email + "</a>",
             phone.isEmpty() ? "" : "<a href=\"tel:" + phone + "\" class=\"social-row\"><span class=\"icon-wrap\">&#128222; " + phone + "</span> &#8599;</a>",
             linkedin.isEmpty()? "" : "<a href=\"" + linkedin + "\" target=\"_blank\" class=\"social-row\"><span class=\"icon-wrap\">&#128279; LinkedIn</span> &#8599;</a>",
