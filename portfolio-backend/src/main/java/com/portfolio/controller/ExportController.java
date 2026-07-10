@@ -536,6 +536,14 @@ public class ExportController {
   </section>
 </main>
 
+<!-- Lightbox Modal for Certificate / Proof View -->
+<div id="cert-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(2,6,23,0.95); align-items:center; justify-content:center; padding:2rem; backdrop-filter:blur(8px); transition: opacity 0.25s ease;">
+  <div style="position:relative; max-width:90%; max-height:90%; display:flex; flex-direction:column; align-items:center; gap:1rem;">
+    <img id="cert-modal-img" src="" style="max-width:100%; max-height:75vh; object-fit:contain; border-radius:12px; border:2px solid rgba(255,255,255,0.15); box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);" />
+    <button onclick="closeCertModal()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#fff; padding:0.6rem 1.5rem; border-radius:9999px; font-weight:600; font-size:0.8rem; cursor:pointer; backdrop-filter:blur(4px); transition: all 0.2s; outline:none;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">&times; Close Preview</button>
+  </div>
+</div>
+
 <footer>
   <p>&copy; %d %s &mdash; Powered by Folio</p>
 </footer>
@@ -617,6 +625,30 @@ public class ExportController {
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById('tab-'+tab).classList.add('active');
     event.target.classList.add('active');
+  }
+
+  // Lightbox Modal helpers
+  function openCertModal(src, filename) {
+    if (src.startsWith('data:application/pdf') || src.includes('.pdf')) {
+      const link = document.createElement('a');
+      link.href = src;
+      link.download = filename || 'Certificate.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      const modal = document.getElementById('cert-modal');
+      const img = document.getElementById('cert-modal-img');
+      img.src = src;
+      modal.style.display = 'flex';
+      modal.style.opacity = '0';
+      setTimeout(() => { modal.style.opacity = '1'; }, 10);
+    }
+  }
+  function closeCertModal() {
+    const modal = document.getElementById('cert-modal');
+    modal.style.opacity = '0';
+    setTimeout(() => { modal.style.display = 'none'; }, 200);
   }
 
   // Smooth scroll
@@ -942,17 +974,17 @@ public class ExportController {
                 if (e.mediaUrl().toLowerCase().endsWith(".pdf")) {
                     mediaHtml = """
                     <div style="margin-top:0.75rem;">
-                      <a href="%s" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; border:1px solid rgba(99,102,241,0.3); background:rgba(99,102,241,0.15); color:#818cf8; font-size:0.75rem; padding:0.4rem 0.8rem; border-radius:0.375rem; font-weight:600; text-decoration:none;">
+                      <a href="javascript:void(0)" onclick="openCertModal('%s', '%s Proof')" style="display:inline-flex; align-items:center; gap:0.5rem; border:1px solid rgba(99,102,241,0.3); background:rgba(99,102,241,0.15); color:#818cf8; font-size:0.75rem; padding:0.4rem 0.8rem; border-radius:0.375rem; font-weight:600; text-decoration:none;">
                         &#128196; View Work Certificate/Proof
                       </a>
-                    </div>""".formatted(esc(mediaSrc));
+                    </div>""".formatted(esc(mediaSrc), esc(e.company()));
                 } else {
                     mediaHtml = """
                     <div style="margin-top:0.75rem;">
-                      <a href="%s" target="_blank" style="display:inline-block; border:1px solid rgba(255,255,255,0.08); border-radius:0.5rem; overflow:hidden; max-width:240px;">
+                      <a href="javascript:void(0)" onclick="openCertModal('%s', '%s Proof')" style="display:inline-block; border:1px solid rgba(255,255,255,0.08); border-radius:0.5rem; overflow:hidden; max-width:240px;">
                         <img src="%s" alt="%s Certificate" style="max-height:144px; width:100%%; object-fit:cover; display:block;" />
                       </a>
-                    </div>""".formatted(esc(mediaSrc), esc(mediaSrc), esc(e.company()));
+                    </div>""".formatted(esc(mediaSrc), esc(e.company()), esc(mediaSrc), esc(e.company()));
                 }
             }
             return """
@@ -1026,7 +1058,7 @@ public class ExportController {
                         "<img src=\"" + certImgSrc + "\" alt=\"" + esc(c.name()) + "\" " +
                         "style=\"width:100%;height:100%;object-fit:cover;\">" +
                         "</div>";
-                    viewFileLink = "<a href=\"" + esc(certImgSrc) + "\" target=\"_blank\" class=\"cert-link\" style=\"color:#22d3ee; text-decoration:none; display:inline-block; margin-top:0;\">View File &rarr;</a>";
+                    viewFileLink = "<a href=\"javascript:void(0)\" onclick=\"openCertModal('" + esc(certImgSrc) + "', '" + esc(c.name()) + "')\" class=\"cert-link\" style=\"color:#22d3ee; text-decoration:none; display:inline-block; margin-top:0;\">View File &rarr;</a>";
                 }
             }
             
@@ -1034,6 +1066,10 @@ public class ExportController {
             if (!verifyLink.isEmpty() || !viewFileLink.isEmpty()) {
                 actionLinks = "<div style=\"display:flex; gap:1rem; margin-top:0.5rem;\">" + verifyLink + viewFileLink + "</div>";
             }
+            
+            String issueDateHtml = c.issueDate() != null && !c.issueDate().trim().isEmpty()
+                ? "<p class=\"cert-date\" style=\"font-size:0.65rem; font-family:monospace; color:rgba(255,255,255,0.4); margin-top:0.15rem;\">Issued: " + esc(c.issueDate()) + "</p>"
+                : "";
             
             return """
 <div class="%s">
@@ -1045,8 +1081,9 @@ public class ExportController {
     <p class="cert-issuer">%s</p>
     %s
     %s
+    %s
   </div>
-</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), certImgHtml, actionLinks);
+</div>""".formatted(cardClass, iconClass, iconSvg, esc(c.name()), esc(c.issuingOrganization()!=null?c.issuingOrganization():""), issueDateHtml, certImgHtml, actionLinks);
         }).collect(Collectors.joining("\n"));
         return """
 <section id="certificates">
