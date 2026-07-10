@@ -392,16 +392,26 @@ public class ExportController {
     @keyframes pulse-slow { 0%%, 100%% { opacity: 1; } 50%% { opacity: 0.85; } }
     /* ── Achievements ── */
     .ach-grid { display:grid; grid-template-columns: 1fr; gap:1.5rem; }
-    @media (min-width: 768px) {
-      .ach-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 1024px) {
+      .ach-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; text-align:left; min-height:280px; }
-    .ach-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,transparent,rgba(34,211,238,.35),transparent); }
-    .ach-tag { display:inline-block; font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; padding:.3rem .7rem; border-radius:999px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); margin-bottom:.75rem; }
-    .ach-title { font-size:1.15rem; font-weight:800; color:#fff; line-height:1.3; }
-    .ach-desc { font-size:.78rem; color:rgba(255,255,255,.45); line-height:1.65; margin-top:.5rem; }
-    .ach-date { font-size:.65rem; font-family:monospace; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.35); background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.08); padding:.3rem .6rem; border-radius:.5rem; display:inline-block; margin-top:1rem; }
-    .ach-img { width:100%%; height:7rem; object-fit:cover; border-radius:.6rem; border:1px solid rgba(255,255,255,.08); margin-top:1rem; }
+    .ach-card { background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:1.5rem; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:1.25rem; text-align:left; min-height:180px; }
+    @media (min-width: 768px) {
+      .ach-card { flex-direction:row; justify-content:space-between; align-items:flex-start; }
+    }
+    .ach-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,transparent,rgba(34,211,238,.3),transparent); }
+    .ach-content { flex:1; display:flex; flex-direction:column; gap:0.75rem; min-width:0; }
+    .ach-tag { display:inline-block; font-size:.55rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; padding:.25rem .65rem; border-radius:999px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.5); width:fit-content; }
+    .ach-tag.cyan { background: rgba(34,211,238,.1); border-color: rgba(34,211,238,.2); color: #22d3ee; }
+    .ach-title { font-size:1.25rem; font-weight:800; color:#fff; line-height:1.3; }
+    .ach-desc { font-size:.75rem; color:#94a3b8; line-height:1.6; }
+    .ach-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.75rem; flex-shrink:0; width:100%%; }
+    @media (min-width: 768px) {
+      .ach-right { width:auto; }
+    }
+    .ach-date { border:1px solid rgba(255,255,255,.08); padding:.4rem .75rem; border-radius:12px; font-family:monospace; font-size:.55rem; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:.1em; text-align:right; background:rgba(0,0,0,.3); }
+    .ach-date span { font-size:.45rem; color:#475569; display:block; margin-bottom:.1rem; }
+    .ach-img { width:4rem; height:4rem; object-fit:cover; border-radius:12px; border:1px solid rgba(255,255,255,.08); }
     /* ── Contact ── */
     .contact-grid { display:grid; grid-template-columns:7fr 5fr; gap:3rem; align-items:start; }
     @media(max-width:720px){ .contact-grid { grid-template-columns:1fr; } }
@@ -1001,22 +1011,34 @@ public class ExportController {
 
     private String buildAchievements(List<AchievementDTO> achs) {
         if (achs == null || achs.isEmpty()) return "";
+        java.util.concurrent.atomic.AtomicInteger index = new java.util.concurrent.atomic.AtomicInteger(0);
         String cards = achs.stream().map(a -> {
+            int idx = index.getAndIncrement();
+            boolean isEven = idx % 2 == 0;
+            String tagText = isEven ? "Major Achievement" : "Selected Cohort";
+            String tagClass = isEven ? "ach-tag" : "ach-tag cyan";
+            
             String img = a.mediaUrl()!=null&&!a.mediaUrl().isEmpty()
                 ? "<img class=\"ach-img\" src=\"" + esc(resolveUrl(a.mediaUrl())) + "\" alt=\"proof\" />" : "";
+            
             String date = a.associatedDate()!=null&&!a.associatedDate().isEmpty()
-                ? "<span class=\"ach-date\">" + esc(a.associatedDate()) + "</span>" : "";
+                ? "<div class=\"ach-date\"><span>RECOGNITION</span>" + esc(a.associatedDate()) + "</div>" : "";
+                
+            String desc = a.description()!=null&&!a.description().isEmpty()
+                ? "<p class=\"ach-desc\">" + esc(a.description()) + "</p>" : "";
+                
             return """
 <div class="ach-card ending-edge-animate">
-  <span class="ach-tag">Achievement</span>
-  <p class="ach-title">%s</p>
-  %s
-  %s
-  %s
-</div>""".formatted(esc(a.title()),
-                a.description()!=null&&!a.description().isEmpty()
-                    ? "<p class=\"ach-desc\">" + esc(a.description()) + "</p>" : "",
-                date, img);
+  <div class="ach-content">
+    <span class="%s">%s</span>
+    <p class="ach-title">%s</p>
+    %s
+  </div>
+  <div class="ach-right">
+    %s
+    %s
+  </div>
+</div>""".formatted(tagClass, tagText, esc(a.title()), desc, date, img);
         }).collect(Collectors.joining("\n"));
         return """
 <section id="achievements">
