@@ -1892,7 +1892,7 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
       </div>
 
       {/* Bottom Text Input Bar */}
-      <div className="px-6 py-4 border-t border-white/10 bg-slate-950/40">
+      <div className="px-6 py-4 border-t border-white/10 bg-slate-950/40 flex flex-col gap-2.5">
         <form onSubmit={handleSendText} className="flex gap-2">
           <input
             type="text"
@@ -1914,6 +1914,9 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
             Send
           </button>
         </form>
+        <p className="text-[10px] text-slate-400 font-sans tracking-wide text-center bg-slate-950/60 border border-white/5 py-1.5 px-3 rounded-lg leading-relaxed max-w-xl mx-auto">
+          💡 <span className="font-semibold text-slate-300">Note:</span> Sometimes images/proofs might fail to process or upload successfully due to connection issues. If this occurs, you can save your progress and edit your portfolio later to re-upload.
+        </p>
       </div>
     </div>
   );
