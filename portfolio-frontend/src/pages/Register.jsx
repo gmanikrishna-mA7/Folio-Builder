@@ -26,10 +26,19 @@ export default function Register() {
 
     try {
       await api.post('/api/auth/register', { email, password });
-      setSuccess('Account created successfully! Redirecting to login page...');
+      
+      // Auto-login the user right away!
+      const loginResponse = await api.post('/api/auth/login', { email, password });
+      const { token, email: userEmail, role } = loginResponse.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('userEmail', userEmail);
+      localStorage.setItem('userRole', role);
+
+      setSuccess('Account created successfully! Logging you in...');
       setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+        navigate('/dashboard');
+      }, 800);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
