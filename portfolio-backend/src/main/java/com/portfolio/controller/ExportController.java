@@ -517,6 +517,14 @@ public class ExportController {
     <div class="contact-grid">
       <div>
         <p class="sec-tag">/ Let's Connect</p>
+        <div style="margin-top: 1rem; margin-bottom: 1rem;">
+          <span style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); color:#10b981; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.35rem 0.75rem; border-radius:9999px;">
+            <svg style="width:0.85rem; height:0.85rem; flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Available for work
+          </span>
+        </div>
         <h2 class="contact-headline">Let's build something<br><span class="contact-accent">useful.</span></h2>
         <p class="contact-sub">%s</p>
         <div class="contact-btns">

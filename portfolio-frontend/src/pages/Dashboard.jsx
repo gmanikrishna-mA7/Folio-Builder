@@ -226,6 +226,10 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
+            
+            <p className="text-[10px] text-slate-400 font-sans tracking-wide text-center bg-slate-900/20 border border-white/5 py-2 px-4 rounded-lg mt-8 max-w-2xl mx-auto leading-relaxed">
+              💡 <span className="font-semibold text-slate-300">Notice:</span> Sometimes image uploads or PDF documents might not process successfully due to temporary hosting or network constraints. If you notice any missing images, you can always click the <strong>Edit</strong> button on your portfolio card to re-upload them.
+            </p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center">
