@@ -261,6 +261,14 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleSkillsSubmit = () => {
+    const hasUnsaved = Object.values(skillInputs).some(val => val?.trim());
+    if (hasUnsaved) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have typed skills but haven't added them.\n\n" +
+        "Click OK to discard these skills and proceed, or Cancel to go back and add them."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Skills added: ${portfolioData.skills.map(s => s.name).join(', ')}`);
     nextStep('', portfolioData);
   };
@@ -314,6 +322,13 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleProjectsSubmit = () => {
+    if (projectForm.title.trim() || projectForm.description.trim()) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have filled out project details but haven't clicked '+ Add Project'.\n\n" +
+        "Click OK to discard these details and proceed, or Cancel to go back and add the project."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Added ${portfolioData.projects.length} project(s).`);
     nextStep('', portfolioData);
   };
@@ -433,6 +448,13 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleExperienceSubmit = () => {
+    if (experienceForm.company.trim() || experienceForm.role.trim()) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have filled out work experience details but haven't clicked 'Add Experience'.\n\n" +
+        "Click OK to discard these details and proceed, or Cancel to go back and add the experience."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Added ${portfolioData.experiences.length} work experience entries.`);
     nextStep('', portfolioData);
   };
@@ -457,6 +479,13 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleEducationSubmit = () => {
+    if (educationForm.degreeName.trim() || educationForm.institution.trim()) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have filled out education details but haven't clicked 'Add Education'.\n\n" +
+        "Click OK to discard these details and proceed, or Cancel to go back and add the education."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Added ${portfolioData.educations.length} academic credential(s).`);
     nextStep('', portfolioData);
   };
@@ -490,6 +519,13 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleCertificatesSubmit = () => {
+    if (certificateForm.name.trim() || certificateForm.issuingOrganization.trim()) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have filled out certificate details but haven't clicked 'Add Certificate'.\n\n" +
+        "Click OK to discard these details and proceed, or Cancel to go back and add the certificate."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Added ${portfolioData.certificates.length} certificate(s).`);
     nextStep('', portfolioData);
   };
@@ -526,6 +562,13 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
   };
 
   const handleAchievementsSubmit = () => {
+    if (achievementForm.title.trim()) {
+      const confirmProceed = window.confirm(
+        "⚠️ You have filled out achievement details but haven't clicked 'Add Achievement'.\n\n" +
+        "Click OK to discard these details and proceed, or Cancel to go back and add the achievement."
+      );
+      if (!confirmProceed) return;
+    }
     addMessage('user', `Added ${portfolioData.achievements.length} achievement(s).`);
     nextStep('', portfolioData);
   };
@@ -535,6 +578,27 @@ export default function PortfolioChatBuilder({ portfolioId, onComplete }) {
     setIsSaving(true);
     setSaveStatus('');
     
+    // Validate unsaved sub-forms
+    const unsavedSections = [];
+    if (projectForm.title.trim() || projectForm.description.trim()) unsavedSections.push("Projects");
+    if (experienceForm.company.trim() || experienceForm.role.trim()) unsavedSections.push("Work Experience");
+    if (educationForm.degreeName.trim() || educationForm.institution.trim()) unsavedSections.push("Education");
+    if (certificateForm.name.trim() || certificateForm.issuingOrganization.trim()) unsavedSections.push("Certificates");
+    if (achievementForm.title.trim()) unsavedSections.push("Achievements");
+    if (Object.values(skillInputs).some(val => val?.trim()) || editSkillInput.trim()) unsavedSections.push("Skills");
+
+    if (unsavedSections.length > 0) {
+      const confirmSave = window.confirm(
+        `⚠️ WARNING: You have filled out details in the following sections but did not click their "Add" or "+ Add" button:\n\n` +
+        unsavedSections.map(s => `• ${s}`).join('\n') +
+        `\n\nThese details will NOT be saved to your portfolio. Do you want to proceed and discard these unsaved details?`
+      );
+      if (!confirmSave) {
+        setIsSaving(false);
+        return;
+      }
+    }
+
     // Validate missing contact details
     const missing = [];
     if (!portfolioData.email?.trim()) missing.push("Email Address");
